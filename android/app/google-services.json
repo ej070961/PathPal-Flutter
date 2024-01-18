@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "380374730412",
+    "project_id": "pathpal-b6b43",
+    "storage_bucket": "pathpal-b6b43.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:380374730412:android:e82a243ee0b565c1c58109",
+        "android_client_info": {
+          "package_name": "com.example.flutter_demo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBslnJp8hEcAe3ad4CbFpBNmx0bfZW1tZk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
