@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pathpal/screens/dp/login.dart';
+import 'package:pathpal/screens/vt/login.dart';
+import 'package:pathpal/screens/vt/signup_1.dart';
+import 'package:pathpal/screens/vt/signup_2.dart';
 import 'package:pathpal/theme.dart';
 import 'package:pathpal/widgets/navBar.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -19,13 +22,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'pathpal',
-        theme: ThemeData(
-          colorScheme: appColorScheme(), // 컬러 테마 적용
-          textTheme: appTextTheme(), //폰트 테마 적용
-          useMaterial3: true,
-        ),
-        home: Scaffold() //빈화면 -> 온보딩 화면으로 수정 필요 
-        );
+      title: 'pathpal',
+      theme: ThemeData(
+        colorScheme: appColorScheme(), // 컬러 테마 적용
+        textTheme: appTextTheme(), //폰트 테마 적용 
+        useMaterial3: true,
+      ),
+      home: VtSignUp() //Disabled persion 로그인 화면
+    );
+
   }
 }
