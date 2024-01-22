@@ -70,18 +70,18 @@ TextTheme appTextTheme() {
   );
 }
 
-ColorScheme appColorScheme(){
+ColorScheme appColorScheme() {
   return ColorScheme(
-    brightness: Brightness.light,
-    primary: mainAccentColor,
-    onPrimary: mainAccentColor,
-    secondary: subAccentColor,
-    onSecondary: subAccentColor,
-    background: background,
-    onBackground: gray900,
-    surface: Colors.white,
-    onSurface: gray900,
-    error: red900,
-    onError: red900,
-  );
+      brightness: Brightness.light,
+      primary: mainAccentColor,
+      onPrimary: mainAccentColor,
+      secondary: paleAccentColor,
+      onSecondary: paleAccentColor,
+      background: background,
+      onBackground: gray900,
+      surface: Colors.white,
+      onSurface: gray900,
+      error: red900,
+      onError: red900,
+      outline: gray200);
 }
