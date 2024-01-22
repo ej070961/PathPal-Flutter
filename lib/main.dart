@@ -4,16 +4,16 @@ import 'package:pathpal/screens/vt/login.dart';
 import 'package:pathpal/screens/vt/signup_1.dart';
 import 'package:pathpal/screens/vt/signup_2.dart';
 import 'package:pathpal/theme.dart';
-
+import 'package:pathpal/widgets/navBar.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 void main() async {
-    WidgetsFlutterBinding.ensureInitialized();
-     await Firebase.initializeApp(
-         options: DefaultFirebaseOptions.currentPlatform, //파이어베이스 연결 코드 
-     );
-    runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform, //파이어베이스 연결 코드
+  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -30,5 +30,6 @@ class MyApp extends StatelessWidget {
       ),
       home: VtSignUp() //Disabled persion 로그인 화면
     );
+
   }
 }
