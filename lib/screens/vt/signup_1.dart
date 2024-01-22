@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pathpal/colors.dart';
 import 'package:pathpal/screens/vt/login.dart';
+import 'package:pathpal/screens/vt/signup_2.dart';
 import 'package:pathpal/widgets/next_button.dart';
+
+import '../../widgets/custom_text_field.dart';
 
 class VtSignUp extends StatefulWidget {
   @override
@@ -81,45 +84,13 @@ class _VtSignUpState extends State<VtSignUp> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '이름',
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      TextFormField(
+                      CustomTextField(
                         controller: _nameController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          // enabledBorder 가 들어간다면 border 는 무시됩니다.
-                          enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: gray200,
-                          )),
-                          contentPadding: EdgeInsets.symmetric(vertical: 10.0),
-                        ),
+                        label: '이름',
                       ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        '전화번호',
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      TextFormField(
+                      CustomTextField(
                         controller: _phoneNumberController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: gray200,
-                              )),
-                          contentPadding: EdgeInsets.symmetric(vertical: 10.0),
-                        ),
+                        label: '전화번호',
                       ),
                     ],
                   ),
@@ -140,7 +111,7 @@ class _VtSignUpState extends State<VtSignUp> {
     // 다음 페이지로 이동하는 로직
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => VtLogin()),
+      MaterialPageRoute(builder: (context) => VtSignUp2()),
     );
   }
 }

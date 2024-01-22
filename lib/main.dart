@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pathpal/screens/dp/login.dart';
 import 'package:pathpal/screens/vt/login.dart';
-import 'package:pathpal/screens/vt/signup.dart';
+import 'package:pathpal/screens/vt/signup_1.dart';
+import 'package:pathpal/screens/vt/signup_2.dart';
 import 'package:pathpal/theme.dart';
 
 import 'package:firebase_core/firebase_core.dart';

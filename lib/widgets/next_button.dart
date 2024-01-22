@@ -24,7 +24,7 @@ class _NextButtonState extends State<NextButton> {
         onPressed: widget.onPressed,
         child: Text(
           widget.title,
-          style: TextStyle(color: Colors.white),
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
         ),
         style: ElevatedButton.styleFrom(
           elevation: 0, // 그림자 없애기
