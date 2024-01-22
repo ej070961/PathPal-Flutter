@@ -34,7 +34,7 @@ TextTheme appTextTheme() {
         ),
     titleMedium: GoogleFonts.notoSansKr(
         fontSize: 16, 
-        fontWeight: FontWeight.w400, 
+        fontWeight: FontWeight.w600,
         letterSpacing: 0.15
         ),
     titleSmall: GoogleFonts.notoSansKr(
@@ -59,7 +59,7 @@ TextTheme appTextTheme() {
         ),
     bodySmall: GoogleFonts.notoSansKr(
         fontSize: 12, 
-        fontWeight: FontWeight.w400, 
+        fontWeight: FontWeight.w400,
         letterSpacing: 0.4
         ),
     labelSmall: GoogleFonts.notoSansKr(
