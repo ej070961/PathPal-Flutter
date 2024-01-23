@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pathpal/colors.dart';
 import 'package:pathpal/screens/vt/login.dart';
@@ -7,11 +8,20 @@ import 'package:pathpal/widgets/next_button.dart';
 import '../../widgets/custom_text_field.dart';
 
 class VtSignUp extends StatefulWidget {
+  final UserCredential? userCredential;
+
+  VtSignUp({this.userCredential});
+
   @override
-  State<VtSignUp> createState() => _VtSignUpState();
+  State<VtSignUp> createState() =>
+      _VtSignUpState(userCredential: userCredential);
 }
 
 class _VtSignUpState extends State<VtSignUp> {
+  final UserCredential? userCredential;
+
+  _VtSignUpState({this.userCredential});
+
   final _nameController = TextEditingController();
   final _phoneNumberController = TextEditingController();
 
@@ -40,8 +50,6 @@ class _VtSignUpState extends State<VtSignUp> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
@@ -99,11 +107,12 @@ class _VtSignUpState extends State<VtSignUp> {
             ),
           ),
           Align(
-            alignment: Alignment.bottomCenter,
-              child: NextButton(title: "다음", onPressed: _isButtonEnabled ? _goToNextPage : null))
+              alignment: Alignment.bottomCenter,
+              child: NextButton(
+                  title: "다음",
+                  onPressed: _isButtonEnabled ? _goToNextPage : null))
         ],
       ),
-
     );
   }
 
@@ -111,7 +120,12 @@ class _VtSignUpState extends State<VtSignUp> {
     // 다음 페이지로 이동하는 로직
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => VtSignUp2()),
+      MaterialPageRoute(
+          builder: (context) => VtSignUp2(
+                userCredential: this.userCredential,
+                name: _nameController.text,
+                phoneNumber: _phoneNumberController.text,
+              )),
     );
   }
 }

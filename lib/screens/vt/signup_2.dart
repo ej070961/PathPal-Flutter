@@ -1,20 +1,35 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pathpal/colors.dart';
+import 'package:pathpal/models/volunteer.dart';
 import 'package:pathpal/screens/vt/login.dart';
+import 'package:pathpal/service/firebase_service.dart';
 import 'package:pathpal/widgets/next_button.dart';
 
 import '../../widgets/custom_text_field.dart';
 
 class VtSignUp2 extends StatefulWidget {
+  final UserCredential? userCredential;
+  String? name;
+  String? phoneNumber;
+
+  VtSignUp2({this.userCredential, this.name, this.phoneNumber});
+
   @override
-  State<VtSignUp2> createState() => _VtSignUpState();
+  State<VtSignUp2> createState() =>
+      _VtSignUpState(this.userCredential, this.name, this.phoneNumber);
 }
 
 class _VtSignUpState extends State<VtSignUp2> {
+  final firebaseService = FireBaseService();
   final _carNumberController = TextEditingController();
 
   bool _isButtonEnabled = true;
+  final UserCredential? userCredential;
+  String? name;
+  String? phoneNumber;
 
+  _VtSignUpState(this.userCredential, this.name, this.phoneNumber);
 
   @override
   void initState() {
@@ -31,7 +46,7 @@ class _VtSignUpState extends State<VtSignUp2> {
   void _validateFields() {
     setState(() {
       _isButtonEnabled = _carNumberController.text.isEmpty ||
-          _carNumberController.text.length == 7;
+          _carNumberController.text.length >= 7;
     });
   }
 
@@ -101,6 +116,20 @@ class _VtSignUpState extends State<VtSignUp2> {
   }
 
   void _goToNextPage() {
+    if (userCredential != null && userCredential?.user != null) {
+      Volunteer volunteer = Volunteer(
+          uid: userCredential?.user?.uid,
+          profileUrl: userCredential?.user?.photoURL,
+          email: userCredential?.user?.email,
+          name: this.name,
+          phoneNumber: this.phoneNumber,
+          carNumber: this._carNumberController.text
+      );
+      firebaseService.saveVolunteer(volunteer);
+    } else {
+        print("Null 발생");
+    }
+
     // 다음 페이지로 이동하는 로직
     Navigator.push(
       context,
