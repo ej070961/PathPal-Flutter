@@ -70,7 +70,7 @@ TextTheme appTextTheme() {
   );
 }
 
-ColorScheme appColorScheme(){
+ColorScheme appColorScheme() {
   return ColorScheme(
     brightness: Brightness.light,
     primary: mainAccentColor,
@@ -85,4 +85,5 @@ ColorScheme appColorScheme(){
     error: red900,
     onError: red900,
   );
+
 }
