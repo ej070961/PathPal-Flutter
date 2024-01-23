@@ -1,8 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:pathpal/screens/vt/login.dart';
+import 'package:pathpal/screens/vt/signup_1.dart';
 
 class AuthService {
-  Future<UserCredential> signInWithGoogle() async {
+
+
+  Future<UserCredential?> signInWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -16,9 +21,8 @@ class AuthService {
       idToken: googleAuth?.idToken,
     );
 
-    print("구글 로그인 성공!");
 
-    // Once signed in, return the UserCredential
     return await FirebaseAuth.instance.signInWithCredential(credential);
+
   }
 }

@@ -1,9 +1,9 @@
 class Volunteer {
-  late String uid;
-  late String profileUrl;
-  late String email;
-  late String name;
-  late String phoneNumber;
+  final String uid;
+  final String? profileUrl;
+  final String? email;
+  final String? name;
+  final String? phoneNumber;
   String? carNumber;
 
   Volunteer(

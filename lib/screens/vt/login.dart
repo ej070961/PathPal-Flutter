@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pathpal/colors.dart';
+import 'package:pathpal/models/volunteer.dart';
+import 'package:pathpal/screens/vt/signup_1.dart';
 
 import '../../service/auth_service.dart';
 
@@ -72,8 +74,16 @@ class VtLogin extends StatelessWidget {
                           'assets/images/google-icon.png',
                           height: 20,
                         ),
-                        onPressed: () {
-                          final userCredential = authService.signInWithGoogle();
+                        onPressed: () async {
+                          final userCredential = await authService.signInWithGoogle();
+
+                          if(userCredential != null && userCredential.additionalUserInfo?.isNewUser == true ){
+                            // Volunteer객체 생성 
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => VtSignUp(userCredential: userCredential)));
+                          } else{
+                            print("홈으로 이동");
+                          }
+
                         },
                         label: Text(
                           '구글 계정으로 시작하기',
