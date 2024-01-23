@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:pathpal/colors.dart';
 
+import '../../service/auth_service.dart';
+
 class VtLogin extends StatelessWidget {
+
+  final authService = AuthService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,7 +73,7 @@ class VtLogin extends StatelessWidget {
                           height: 20,
                         ),
                         onPressed: () {
-                          print("구글 로그인 버튼 클릭");
+                          final userCredential = authService.signInWithGoogle();
                         },
                         label: Text(
                           '구글 계정으로 시작하기',
