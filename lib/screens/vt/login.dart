@@ -4,6 +4,7 @@ import 'package:pathpal/models/volunteer.dart';
 import 'package:pathpal/screens/vt/signup_1.dart';
 
 import '../../service/auth_service.dart';
+import 'car_main.dart';
 
 class VtLogin extends StatelessWidget {
 
@@ -82,9 +83,8 @@ class VtLogin extends StatelessWidget {
                               // Volunteer객체 생성 
                               Navigator.push(context, MaterialPageRoute(builder: (context) => VtSignUp(userCredential: userCredential)));
                             } else{
-                              print("홈으로 이동");
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => CarMain()));
                             }
-          
                           },
                           label: Text(
                             '구글 계정으로 시작하기',
