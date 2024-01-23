@@ -122,6 +122,7 @@ class _VtSignUpState extends State<VtSignUp> {
       context,
       MaterialPageRoute(
           builder: (context) => VtSignUp2(
+                userCredential: this.userCredential,
                 name: _nameController.text,
                 phoneNumber: _phoneNumberController.text,
               )),

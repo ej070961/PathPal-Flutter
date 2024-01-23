@@ -1,5 +1,5 @@
 class Volunteer {
-  final String uid;
+  final String? uid;
   final String? profileUrl;
   final String? email;
   final String? name;
