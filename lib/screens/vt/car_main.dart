@@ -99,6 +99,7 @@ class _CarMainState extends State<CarMain> {
                   onMapCreated: (controller) {
                     mapController = controller;
                   },
+                  zoomControlsEnabled: false,
                   initialCameraPosition: CameraPosition(
                     target: _center,
                     zoom: 13.0,
@@ -107,7 +108,7 @@ class _CarMainState extends State<CarMain> {
                 ),
                 Positioned(
                   // 위치를 지정하여 버튼을 추가합니다.
-                  bottom: 100,
+                  bottom: 30,
                   right: 10,
                   child: FloatingActionButton(
                     foregroundColor: gray400,
