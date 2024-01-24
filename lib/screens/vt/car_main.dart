@@ -1,41 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:pathpal/widgets/appBar.dart';
 
 class CarMain extends StatefulWidget {
   const CarMain({Key? key}) : super(key: key);
 
   @override
-  State<CarMain> createState() => _CarMainState();
+  _CarMainState createState() => _CarMainState();
 }
 
 class _CarMainState extends State<CarMain> {
-  String otherWidgetText = 'Other Widget';
   late GoogleMapController mapController;
-
-  final LatLng _center = const LatLng(45.521563, -122.677433);
+  final LatLng _startLocation = const LatLng(45.521563, -122.677433);
+  final LatLng _endLocation = const LatLng(45.510767, -122.665043);
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+    setState(() {
+      _markers.add(Marker(
+          markerId: const MarkerId('startLocation'),
+          position: _startLocation,
+          infoWindow: const InfoWindow(title: 'Start Location')));
+      _markers.add(Marker(
+          markerId: const MarkerId('endLocation'),
+          position: _endLocation,
+          infoWindow: const InfoWindow(title: 'End Location')));
+    });
   }
+
+  final Set<Marker> _markers = {};
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("PathPal"),
-      ),
+      appBar: MyAppBar(title: 'PathPal'),
       body: Column(
         children: [
           Container(
-            height: 460,  // 다른 위젯의 높이 설정
-            color: Colors.red,  // 다른 위젯의 배경색 설정
+            height: 460,
+            color: Colors.red,
             child: GoogleMap(
               onMapCreated: _onMapCreated,
               initialCameraPosition: CameraPosition(
-                target: _center,
+                target: _startLocation,
                 zoom: 11.0,
               ),
-            ),  // 다른 위젯의 내용 설정
+              markers: _markers,
+            ),
           ),
           Expanded(
             child: Container(
@@ -47,7 +58,7 @@ class _CarMainState extends State<CarMain> {
                     title: Text('Item $index'),
                     onTap: () {
                       setState(() {
-                        otherWidgetText = 'Item $index was tapped';  // 리스트 아이템이 눌렸을 때 Other Widget의 Text 업데이트
+                        // 리스트 아이템이 눌렸을 때 Other Widget의 Text 업데이트
                       });
                     },
                   );

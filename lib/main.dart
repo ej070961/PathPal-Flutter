@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:pathpal/screens/dp/login.dart';
-import 'package:pathpal/screens/vt/MapSample.dart';
 import 'package:pathpal/screens/vt/car_main.dart';
 import 'package:pathpal/screens/vt/login.dart';
 import 'package:pathpal/theme.dart';
