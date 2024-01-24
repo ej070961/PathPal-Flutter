@@ -1,6 +1,15 @@
 # Created by https://www.toptal.com/developers/gitignore/api/flutter
 # Edit at https://www.toptal.com/developers/gitignore?templates=flutter
 
+# IntelliJ IDEA 및 Android Studio 설정 파일
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Visual Studio Code 설정 파일
+.vscode/
+
 ### Flutter ###
 # Flutter/Dart/Pub related
 **/doc/api/
@@ -28,7 +37,7 @@ lib/generated_plugin_registrant.dart
 **/android/key.properties
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
-
+**/android/app/google-services.json
 # iOS/XCode related
 **/ios/**/*.mode1v3
 **/ios/**/*.mode2v3
