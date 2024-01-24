@@ -17,8 +17,8 @@ class MapService {
           title: location.key,
           snippet: 'Lat: ${location.value.latitude}, Lng: ${location.value.longitude}',
         ),
-        icon: location.key == '도착지'
-            ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue)
+        icon: location.key == '출발지'
+            ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow)
             : BitmapDescriptor.defaultMarker,
       );
 
