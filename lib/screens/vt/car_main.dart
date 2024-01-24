@@ -8,7 +8,6 @@ import 'package:pathpal/widgets/appBar.dart';
 
 import '../../colors.dart';
 
-
 class CarMain extends StatefulWidget {
   const CarMain({Key? key}) : super(key: key);
 
@@ -51,7 +50,7 @@ class _CarMainState extends State<CarMain> {
         await mapService.createMarkers(controller, departure, destination);
     final currentLocation = await location.getLocation();
     final currentLatLng =
-    LatLng(currentLocation.latitude!, currentLocation.longitude!);
+        LatLng(currentLocation.latitude!, currentLocation.longitude!);
     setState(() {
       _markers.clear();
       _markers.addAll(markers);
@@ -65,22 +64,20 @@ class _CarMainState extends State<CarMain> {
       );
     });
 
-
-
-
-
     // 카메라를 이동하여 LatLngBounds가 모두 보이도록 조절
     if (_center != departure) {
       // 카메라를 이동하여 LatLngBounds가 모두 보이도록 조절
-      CameraUpdate u2 = CameraUpdate.newLatLngZoom(
-        LatLng(
-          (departure.latitude + destination.latitude) / 2,
-          (departure.longitude + destination.longitude) / 2,
+      CameraUpdate u2 = CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: LatLng(
+            (departure.latitude + destination.latitude) / 2,
+            (departure.longitude + destination.longitude) / 2,
+          ),
+          zoom: 13.0,
         ),
-        13.0,
       );
       this.mapController.animateCamera(u2).then((void v) {
-        mapController.moveCamera(u2);
+        mapController.animateCamera(u2);
       });
     }
   }
@@ -118,8 +115,7 @@ class _CarMainState extends State<CarMain> {
                     onPressed: _currentLocation,
                     child: Icon(Icons.my_location),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(30.0))
-                    ),
+                        borderRadius: BorderRadius.all(Radius.circular(30.0))),
                   ),
                 ),
               ],
