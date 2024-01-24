@@ -9,7 +9,7 @@ class CustomTextField extends StatelessWidget {
   final BorderSide borderSide;
   final String? hint;
 
-  CustomTextField({
+  CustomTextField({super.key, 
     required this.controller,
     required this.label,
     this.hint,
@@ -31,8 +31,9 @@ class CustomTextField extends StatelessWidget {
         ),
         TextFormField(
           controller: controller,
+    
           decoration: InputDecoration(
-            hintText: this.hint,
+            hintText: hint,
             hintStyle: appTextTheme().bodyMedium,
             border: OutlineInputBorder(),
             enabledBorder: OutlineInputBorder(borderSide: borderSide),

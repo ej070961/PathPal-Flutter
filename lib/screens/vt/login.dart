@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:pathpal/colors.dart';
 import 'package:pathpal/models/volunteer.dart';
+import 'package:pathpal/screens/dp/login.dart';
 import 'package:pathpal/screens/vt/signup_1.dart';
 
 import '../../service/auth_service.dart';
 import 'car_main.dart';
 
 class VtLogin extends StatelessWidget {
-
   final authService = AuthService();
+
+  VtLogin({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -48,10 +50,10 @@ class VtLogin extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Container(
-                    child: Image.asset('assets/images/logo.png'),
+                  SizedBox(
                     width: 270,
                     height: 270,
+                    child: Image.asset('assets/images/logo.png'),
                   ),
                   SizedBox(
                     height: 60,
@@ -88,9 +90,7 @@ class VtLogin extends StatelessWidget {
                           },
                           label: Text(
                             '구글 계정으로 시작하기',
-                            style: TextStyle(
-                              color: gray600
-                            ),
+                            style: TextStyle(color: gray600),
                           ),
                         ),
                       ),
@@ -98,20 +98,23 @@ class VtLogin extends StatelessWidget {
                         height: 40,
                       ),
                       Text(
-                        '봉사자 이신가요?',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: gray600
-                        ),
+                        '장애인사용자 이신가요?',
+                        style: TextStyle(fontSize: 14, color: gray600),
                       ),
-                      Text(
-                        'Go to PathPal for Volunteers',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          fontWeight: FontWeight.w100
-                        ),
-                      ),
+                      GestureDetector(
+                          child: Text(
+                            'Go to Original PathPal',
+                            style: TextStyle(
+                                fontSize: 16,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                fontWeight: FontWeight.w100),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DpLogin()));
+                          })
                     ],
                   ),
                 ],
