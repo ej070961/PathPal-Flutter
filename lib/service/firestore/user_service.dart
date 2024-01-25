@@ -42,13 +42,24 @@ class UserService {
 
 
    Future<bool> checkDpUser(String uid) async {
-    try {
-      final userSnapshot = await firestore.collection('disabledPerson').doc(uid).get();
-      return userSnapshot.exists; 
-    } catch (e) {
-      // 오류 처리
-      return false;
-    }
-  
+     try {
+       final userSnapshot = await firestore.collection('disabledPerson').doc(
+           uid).get();
+       return userSnapshot.exists;
+     } catch (e) {
+       // 오류 처리
+       return false;
+     }
+   }
+
+    Future<bool> checkVtUser(String uid) async {
+      try {
+        final userSnapshot = await firestore.collection('volunteers').doc(
+            uid).get();
+        return userSnapshot.exists;
+      } catch (e) {
+        // 오류 처리
+        return false;
+      }
   }
 }

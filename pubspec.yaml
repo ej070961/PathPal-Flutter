@@ -72,6 +72,11 @@ flutter:
   assets:
     - assets/images/logo.png
     - assets/images/google-icon.png
+    - assets/images/basic-profile.png
+    - assets/images/circle-icon.png
+    - assets/images/red-circle-icon.png
+    - assets/images/timer-icon.png
+    - assets/images/arrow-icon.png
   fonts:
     - family: login
       fonts:
