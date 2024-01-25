@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:pathpal/screens/vt/car_detail.dart';
 import 'package:pathpal/service/map_service.dart';
 import 'package:pathpal/theme.dart';
 import 'package:pathpal/widgets/appBar.dart';
 
 import '../../colors.dart';
+import '../../utils/app_images.dart';
+import '../../widgets/build_image.dart';
 import '../../widgets/google_map.dart';
 
 class CarMain extends StatefulWidget {
@@ -20,12 +23,6 @@ class _CarMainState extends State<CarMain> {
   final MapService mapService = MapService();
   List<Map<String, LatLng>> items = [];
   LatLng? _center;
-
-  static const String basicProfileImagePath = 'assets/images/basic-profile.png';
-  static const String circleIconImagePath = 'assets/images/circle-icon.png';
-  static const String redCircleIconImagePath = 'assets/images/red-circle-icon.png';
-  static const String timerIconImagePath = 'assets/images/timer-icon.png';
-  static const String arrowIconImagePath = 'assets/images/arrow-icon.png';
 
   int? _selectedItemIndex;
   late List<bool> _isImageVisibleList;
@@ -97,9 +94,6 @@ class _CarMainState extends State<CarMain> {
     );
   }
 
-  Widget _buildImage(String path, {double width = 5}) {
-    return Image(image: AssetImage(path), width: width);
-  }
 
   Widget _buildListItem(BuildContext context, int index) {
     return Container(
@@ -112,7 +106,7 @@ class _CarMainState extends State<CarMain> {
               padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
               child: Column(
                 children: [
-                  _buildImage(basicProfileImagePath),
+                  BuildImage.buildImage(AppImages.basicProfileImagePath, width: 30),
                   Text(
                     '전창하',
                     style: appTextTheme().labelSmall,
@@ -128,12 +122,11 @@ class _CarMainState extends State<CarMain> {
                     width: 200,
                     child: Row(
                       children: [
-                        _buildImage(circleIconImagePath),
+                        BuildImage.buildImage(AppImages.circleIconImagePath),
                         SizedBox(
                           width: 15,
                         ),
-                        Text('출발지 : 공릉역',
-                            style: appTextTheme().labelSmall)
+                        Text('출발지 : 공릉역', style: appTextTheme().labelSmall)
                       ],
                     ),
                   ),
@@ -141,7 +134,7 @@ class _CarMainState extends State<CarMain> {
                     width: 200,
                     child: Row(
                       children: [
-                        _buildImage(redCircleIconImagePath),
+                        BuildImage.buildImage(AppImages.redCircleIconImagePath),
                         SizedBox(
                           width: 15,
                         ),
@@ -156,7 +149,7 @@ class _CarMainState extends State<CarMain> {
                     width: 200,
                     child: Row(
                       children: [
-                        _buildImage(timerIconImagePath, width: 7),
+                        BuildImage.buildImage(AppImages.timerIconImagePath, width: 7),
                         SizedBox(
                           width: 13,
                         ),
@@ -171,19 +164,27 @@ class _CarMainState extends State<CarMain> {
             Expanded(
               flex: 1,
               child: Padding(
-                padding:
-                const EdgeInsets.fromLTRB(50, 15, 0, 0),
+                padding: const EdgeInsets.fromLTRB(50, 15, 0, 0),
                 child: Column(
                   children: [
                     if (_isImageVisibleList[
-                    index]) // 해당 아이템의 이미지 표시 상태가 참이면 이미지 표시
+                        index]) // 해당 아이템의 이미지 표시 상태가 참이면 이미지 표시
                       GestureDetector(
                         onTap: () {
                           // 여기에 이미지를 눌렀을 때 실행할 로직을 작성합니다.
-                          print(
-                              'Image tapped!'); // 예시로 콘솔에 메시지를 출력하였습니다.
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CarDetail(
+                                        markers: _markers,
+                                        center: _center,
+                                        onMapCreated: (controller) {
+                                          mapController = controller;
+                                        },
+                                        currentLocationFunction: _currentLocation,
+                                      )));
                         },
-                        child: _buildImage(arrowIconImagePath, width: 20),
+                        child: BuildImage.buildImage(AppImages.arrowIconImagePath, width: 20),
                       ),
                   ],
                 ),
@@ -196,13 +197,13 @@ class _CarMainState extends State<CarMain> {
             if (_selectedItemIndex != null) {
               // 이전에 선택된 아이템이 있으면
               _isImageVisibleList[_selectedItemIndex!] =
-              false; // 이전에 선택된 아이템의 이미지를 숨김
+                  false; // 이전에 선택된 아이템의 이미지를 숨김
             }
             _selectedItemIndex = index;
             _isImageVisibleList[index] = true;
           });
-          _onMapCreated(mapController, items[index]['출발지']!,
-              items[index]['도착지']!);
+          _onMapCreated(
+              mapController, items[index]['출발지']!, items[index]['도착지']!);
         },
       ),
     );
