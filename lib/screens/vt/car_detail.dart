@@ -7,7 +7,7 @@ import 'package:pathpal/widgets/next_button.dart';
 import '../../utils/app_images.dart';
 import '../../widgets/build_image.dart';
 
-class CarDetail extends StatefulWidget {
+class CarDetail extends StatelessWidget {
   final LatLng? center;
   final Set<Marker> markers;
   final Function? onMapCreated;
@@ -21,11 +21,7 @@ class CarDetail extends StatefulWidget {
     this.currentLocationFunction,
   });
 
-  @override
-  State<CarDetail> createState() => _CarDetailState();
-}
 
-class _CarDetailState extends State<CarDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,9 +42,9 @@ class _CarDetailState extends State<CarDetail> {
             child: Column(
               children: [
                 Container(
-                    width: 50,
-                    child: BuildImage.buildImage(
-                        AppImages.basicProfileImagePath),
+                  width: 50,
+                  child: BuildImage.buildImage(
+                      AppImages.basicProfileImagePath),
 
                 ),
               ],
@@ -56,10 +52,10 @@ class _CarDetailState extends State<CarDetail> {
           ),
           Expanded(
             child: MyGoogleMap(
-              markers: widget.markers,
-              center: widget.center,
-              onMapCreated: widget.onMapCreated,
-              currentLocationFunction: widget.currentLocationFunction,
+              markers: markers,
+              center: center,
+              onMapCreated: onMapCreated,
+              currentLocationFunction: currentLocationFunction,
             ),
           ),
           NextButton(title: "요청 수락하기", onPressed: (){
@@ -70,3 +66,4 @@ class _CarDetailState extends State<CarDetail> {
     );
   }
 }
+
