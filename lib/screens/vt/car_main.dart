@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pathpal/service/map_service.dart';
+import 'package:pathpal/theme.dart';
 import 'package:pathpal/widgets/appBar.dart';
 
 import '../../colors.dart';
@@ -18,6 +19,9 @@ class _CarMainState extends State<CarMain> {
   final MapService mapService = MapService();
   List<Map<String, LatLng>> items = [];
   LatLng? _center;
+
+  int? _selectedItemIndex;
+  late List<bool> _isImageVisibleList;
 
   @override
   void initState() {
@@ -38,6 +42,7 @@ class _CarMainState extends State<CarMain> {
       },
     ];
     _center = const LatLng(37.6300, 127.0764);
+    _isImageVisibleList = List<bool>.filled(items.length, false);  // 모든 아이템에 대해 false로 초기화
   }
 
   Future<void> _onMapCreated(GoogleMapController controller, LatLng departure,
@@ -102,18 +107,118 @@ class _CarMainState extends State<CarMain> {
           ),
           Expanded(
             child: Container(
-              color: Colors.blue[100],
-              child: ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    title: Text('Item $index'),
-                    onTap: () {
-                      _onMapCreated(mapController, items[index]['출발지']!,
-                          items[index]['도착지']!);
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Container(
+                  color: Colors.white,
+                  child: ListView.builder(
+                    itemCount: items.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Container(
+                        height: 70,
+                        color: _selectedItemIndex == index ? background : null,
+                        child: ListTile(
+                          title: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
+                                child: Column(
+                                  children: [
+                                    Image(
+                                        image: AssetImage(
+                                            'assets/images/basic-profile.png')),
+                                    Text(
+                                      '전창하',
+                                      style: appTextTheme().labelSmall,
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      width: 200,
+                                      child: Row(
+                                        children: [
+                                          Image(
+                                              image: AssetImage(
+                                                  'assets/images/circle-icon.png'), width: 5),
+                                          SizedBox(
+                                            width: 15,
+                                          ),
+                                          Text('출발지 : 공릉역',
+                                              style: appTextTheme().labelSmall)
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 200,
+                                      child: Row(
+                                        children: [
+                                          Image(
+                                              image: AssetImage(
+                                                  'assets/images/red-circle-icon.png'), width: 5),
+                                          SizedBox(
+                                            width: 15,
+                                          ),
+                                          Text(
+                                            '도착지 : 하계역',
+                                            style: appTextTheme().labelSmall,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 200,
+                                      child: Row(
+                                        children: [
+                                          Image(
+                                              image: AssetImage(
+                                                  'assets/images/timer-icon.png'), width: 7),
+                                          SizedBox(
+                                            width: 13,
+                                          ),
+                                          Text('출발시간 : 오늘(월) 17:35',
+                                              style: appTextTheme().labelSmall)
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(50,15,0,0),
+                                  child: Column(
+                                    children: [
+                                      if (_isImageVisibleList[index])  // 해당 아이템의 이미지 표시 상태가 참이면 이미지 표시
+                                        Image(image: AssetImage('assets/images/arrow-icon.png'), width: 20),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          onTap: () {
+                            setState(() {
+                              if (_selectedItemIndex != null) {  // 이전에 선택된 아이템이 있으면
+                                _isImageVisibleList[_selectedItemIndex!] = false;  // 이전에 선택된 아이템의 이미지를 숨김
+                              }
+                              _selectedItemIndex = index;
+                              _isImageVisibleList[index] = true;
+                            });
+                            _onMapCreated(mapController, items[index]['출발지']!,
+                                items[index]['도착지']!);
+                          },
+                        ),
+                      );
                     },
-                  );
-                },
+                  ),
+                ),
               ),
             ),
           ),
