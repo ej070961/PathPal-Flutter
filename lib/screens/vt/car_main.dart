@@ -5,6 +5,7 @@ import 'package:pathpal/theme.dart';
 import 'package:pathpal/widgets/appBar.dart';
 
 import '../../colors.dart';
+import '../../widgets/google_map.dart';
 
 class CarMain extends StatefulWidget {
   const CarMain({Key? key}) : super(key: key);
@@ -76,33 +77,14 @@ class _CarMainState extends State<CarMain> {
         children: [
           Container(
             height: 460,
-            color: Colors.red,
-            child: Stack(
-              children: [
-                GoogleMap(
-                  onMapCreated: (controller) {
-                    mapController = controller;
-                  },
-                  zoomControlsEnabled: false,
-                  initialCameraPosition: CameraPosition(
-                    target: _center!,
-                    zoom: 13.0,
-                  ),
-                  markers: _markers,
-                ),
-                Positioned(
-                  bottom: 30,
-                  right: 10,
-                  child: FloatingActionButton(
-                    foregroundColor: gray400,
-                    backgroundColor: Colors.white,
-                    onPressed: _currentLocation,
-                    child: Icon(Icons.my_location),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(30.0))),
-                  ),
-                ),
-              ],
+            color: background,
+            child: MyGoogleMap(
+              center: _center,
+              markers: _markers,
+              onMapCreated: (controller) {
+                mapController = controller;
+              },
+              currentLocationFunction: _currentLocation,
             ),
           ),
           Expanded(
@@ -196,7 +178,13 @@ class _CarMainState extends State<CarMain> {
                                   child: Column(
                                     children: [
                                       if (_isImageVisibleList[index])  // 해당 아이템의 이미지 표시 상태가 참이면 이미지 표시
-                                        Image(image: AssetImage('assets/images/arrow-icon.png'), width: 20),
+                                        GestureDetector(
+                                          onTap: () {
+                                            // 여기에 이미지를 눌렀을 때 실행할 로직을 작성합니다.
+                                            print('Image tapped!');  // 예시로 콘솔에 메시지를 출력하였습니다.
+                                          },
+                                          child: Image(image: AssetImage('assets/images/arrow-icon.png'), width: 20),
+                                        ),
                                     ],
                                   ),
                                 ),
