@@ -25,10 +25,6 @@ class _DpNavBarState extends State<DpNavBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(
-        title: 'PathPal',
-        ),
-
       body: Center(
         child: IndexedStack(
           index: selectedIndex,
@@ -41,6 +37,7 @@ class _DpNavBarState extends State<DpNavBar> {
         ),
 
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(

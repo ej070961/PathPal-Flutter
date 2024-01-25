@@ -77,6 +77,8 @@ flutter:
     - assets/images/red-circle-icon.png
     - assets/images/timer-icon.png
     - assets/images/arrow-icon.png
+    - assets/images/car-image.png
+    - assets/images/walk-image.png
   fonts:
     - family: login
       fonts:
