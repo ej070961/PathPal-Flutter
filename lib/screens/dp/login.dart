@@ -7,6 +7,7 @@ import 'package:pathpal/screens/vt/login.dart';
 import 'package:pathpal/widgets/navBar.dart';
 import '../../service/auth_service.dart';
 import 'package:pathpal/colors.dart';
+import '../../service/firestore/user_service.dart';
 
 class DpLogin extends StatefulWidget {
   const DpLogin({super.key});
@@ -16,6 +17,8 @@ class DpLogin extends StatefulWidget {
 }
 
 class DpLoginState extends State<DpLogin> {
+  UserService userService = UserService();
+
   @override
   void initState() {
     super.initState();
@@ -95,11 +98,10 @@ class DpLoginState extends State<DpLogin> {
                               final userCredential = await authService.signInWithGoogle();
                               print('userCredential : $userCredential');
 
-                              if (userCredential != null) {
+                              if (userCredential != null && userCredential.user?.uid != null) {
                                 // 사용자가 새로운 사용자인 경우 회원가입 화면으로 이동
-                                if (userCredential.additionalUserInfo?.isNewUser == true) {
-      
-                                  // Volunteer 객체 생성 후 회원가입 화면으로 이동합니다.
+                                if ( await userService.checkDpUser(userCredential.user!.uid) == false) {
+                                  // Dp 객체 생성 후 회원가입 화면으로 이동합니다.
                                   if(context.mounted){
                                     Navigator.push(
                                       context,
