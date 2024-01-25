@@ -79,6 +79,7 @@ flutter:
     - assets/images/arrow-icon.png
     - assets/images/car-image.png
     - assets/images/walk-image.png
+    - assets/images/left-arrow-icon.png
   fonts:
     - family: login
       fonts:
