@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pathpal/colors.dart';
 import 'package:pathpal/models/disabledPerson.dart';
 import 'package:pathpal/screens/dp/login.dart';
-import 'package:pathpal/service/firebase_service.dart';
+import 'package:pathpal/service/firestore/user_service.dart';
 import 'package:pathpal/widgets/custom_dropdown.dart';
 import 'package:pathpal/widgets/navBar.dart';
 import 'package:pathpal/widgets/next_button.dart';
@@ -22,7 +22,7 @@ class DpSignUp2 extends StatefulWidget {
 }
 
 class _DpSignUp2State extends State<DpSignUp2> {
-  final firebaseService = FireBaseService();
+  final firebaseService = UserService();
 
   bool _isButtonEnabled = true;
 
