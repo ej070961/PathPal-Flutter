@@ -53,7 +53,7 @@ class _DpSignupState extends State<DpSignup> {
       appBar: AppBar(
         leading: IconButton(
             onPressed: () {
-              print("뒤로가기버튼");
+              Navigator.pop(context);
             },
             icon: Icon(Icons.arrow_back)),
       ),

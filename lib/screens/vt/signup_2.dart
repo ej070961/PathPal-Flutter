@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pathpal/colors.dart';
 import 'package:pathpal/models/volunteer.dart';
 import 'package:pathpal/screens/vt/login.dart';
-import 'package:pathpal/service/firebase_service.dart';
+import 'package:pathpal/service/firestore/user_service.dart';
 import 'package:pathpal/widgets/next_button.dart';
 
 import '../../widgets/custom_text_field.dart';
@@ -13,15 +13,15 @@ class VtSignUp2 extends StatefulWidget {
   String? name;
   String? phoneNumber;
 
-  VtSignUp2({this.userCredential, this.name, this.phoneNumber});
+  VtSignUp2({super.key, this.userCredential, this.name, this.phoneNumber});
 
   @override
   State<VtSignUp2> createState() =>
-      _VtSignUpState(this.userCredential, this.name, this.phoneNumber);
+      _VtSignUpState(userCredential, name, phoneNumber);
 }
 
 class _VtSignUpState extends State<VtSignUp2> {
-  final firebaseService = FireBaseService();
+  final firebaseService = UserService();
   final _carNumberController = TextEditingController();
 
   bool _isButtonEnabled = true;
@@ -121,9 +121,9 @@ class _VtSignUpState extends State<VtSignUp2> {
           uid: userCredential?.user?.uid,
           profileUrl: userCredential?.user?.photoURL,
           email: userCredential?.user?.email,
-          name: this.name,
-          phoneNumber: this.phoneNumber,
-          carNumber: this._carNumberController.text
+          name: name,
+          phoneNumber: phoneNumber,
+          carNumber: _carNumberController.text
       );
       firebaseService.saveVolunteer(volunteer);
     } else {
