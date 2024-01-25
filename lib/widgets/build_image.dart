@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../utils/app_images.dart';
+
 class BuildImage {
-  static Widget buildImage(String path, {double width = 5}) {
-    return Image(image: AssetImage(path), width: width, fit: BoxFit.fill,);
+  static buildImage(String? imagePath, {double width = 50}) {
+    return imagePath != null
+        ? Image.network(imagePath, width: width)
+        : Image.asset(AppImages.basicProfileImagePath, width: width);
   }
 }

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pathpal/screens/vt/car_detail.dart';
@@ -75,15 +76,27 @@ class _CarMainState extends State<CarMain> {
                 padding: const EdgeInsets.all(20.0),
                 child: Container(
                   color: Colors.white,
-                  child: ListView.builder(
-                    itemCount: items.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Container(
-                        height: 70,
-                        color: _selectedItemIndex == index ? background : null,
-                        child: _buildListItem(context, index),
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance.collection('cars').snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return CircularProgressIndicator(); // 데이터가 로딩 중일 때 보여줄 위젯
+                      }
+
+                      return ListView.builder(
+
+                        itemCount: snapshot.data?.docs.length ?? 0,
+                        itemBuilder: (BuildContext context, int index) {
+                          DocumentSnapshot car = snapshot.data!.docs[index];
+
+                          return Container(
+                            height: 70,
+                            color: _selectedItemIndex == index ? background : null,
+                            child: _buildListItem(context, index, car),
+                          );
+                        },
                       );
-                    },
+                    }
                   ),
                 ),
               ),
@@ -95,7 +108,7 @@ class _CarMainState extends State<CarMain> {
   }
 
 
-  Widget _buildListItem(BuildContext context, int index) {
+  Widget _buildListItem(BuildContext context, int index, DocumentSnapshot car) {
     return Container(
       height: 70,
       color: _selectedItemIndex == index ? background : null,
