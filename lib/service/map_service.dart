@@ -33,6 +33,7 @@ class MapService {
     final location = Location();
     final currentLocation = await location.getLocation();
     return LatLng(currentLocation.latitude!, currentLocation.longitude!);
+    
   }
 
   void moveCamera(GoogleMapController controller, LatLng departure, LatLng destination) {

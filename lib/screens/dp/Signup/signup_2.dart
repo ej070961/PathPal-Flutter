@@ -5,7 +5,7 @@ import 'package:pathpal/models/disabledPerson.dart';
 import 'package:pathpal/screens/dp/login.dart';
 import 'package:pathpal/service/firestore/user_service.dart';
 import 'package:pathpal/widgets/custom_dropdown.dart';
-import 'package:pathpal/widgets/navBar.dart';
+import 'package:pathpal/widgets/navbar.dart';
 import 'package:pathpal/widgets/next_button.dart';
 
 

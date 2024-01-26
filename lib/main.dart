@@ -6,7 +6,7 @@ import 'package:pathpal/screens/vt/login.dart';
 import 'package:pathpal/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:pathpal/widgets/navBar.dart';
+import 'package:pathpal/widgets/navbar.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
           textTheme: appTextTheme(), //폰트 테마 적용
           useMaterial3: true,
         ),
-        home: DpLogin() //Disabled persion 로그인 화면
+        home: DpNavBar() //Disabled persion 로그인 화면
         );
   }
 }
