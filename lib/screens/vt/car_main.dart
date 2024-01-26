@@ -78,26 +78,28 @@ class _CarMainState extends State<CarMain> {
                 child: Container(
                   color: Colors.white,
                   child: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance.collection('cars').snapshots(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return CircularProgressIndicator(); // 데이터가 로딩 중일 때 보여줄 위젯
-                      }
+                      stream: FirebaseFirestore.instance
+                          .collection('cars')
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return CircularProgressIndicator(); // 데이터가 로딩 중일 때 보여줄 위젯
+                        }
 
-                      return ListView.builder(
-
-                        itemCount: snapshot.data?.docs.length ?? 0,
-                        itemBuilder: (BuildContext context, int index) {
-                          DocumentSnapshot car = snapshot.data!.docs[index];
-                          return Container(
-                            height: 70,
-                            color: _selectedItemIndex == index ? background : null,
-                            child: _buildListItem(context, index, car),
-                          );
-                        },
-                      );
-                    }
-                  ),
+                        return ListView.builder(
+                          itemCount: snapshot.data?.docs.length ?? 0,
+                          itemBuilder: (BuildContext context, int index) {
+                            DocumentSnapshot car = snapshot.data!.docs[index];
+                            return Container(
+                              height: 70,
+                              color: _selectedItemIndex == index
+                                  ? background
+                                  : null,
+                              child: _buildListItem(context, index, car),
+                            );
+                          },
+                        );
+                      }),
                 ),
               ),
             ),
@@ -107,136 +109,146 @@ class _CarMainState extends State<CarMain> {
     );
   }
 
-
   Widget _buildListItem(BuildContext context, int index, DocumentSnapshot car) {
-
     return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance.collection('disabledPerson').doc(car['dp_uid']).snapshots(),
-      builder: (context, snapshot) {
+        stream: FirebaseFirestore.instance
+            .collection('disabledPerson')
+            .doc(car['dp_uid'])
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            // 데이터가 로드되지 않았을 때의 처리를 해줍니다.
+            return CircularProgressIndicator();
+          }
+          var doc = snapshot.data!;
+          GeoPoint location = car['departure_address'];
+          DateTime date = car['departure_time'].toDate();
+          String dateString = date.toString();
+          Future<String?> address =
+              getAddressFromLatLng(location.latitude, location.longitude);
 
-
-        if (!snapshot.hasData) {
-          // 데이터가 로드되지 않았을 때의 처리를 해줍니다.
-          return CircularProgressIndicator();
-        }
-        var doc = snapshot.data!;
-        print(snapshot.data?.get('profileUrl'));
-        GeoPoint location = car['departure_address'];
-        DateTime date = car['departure_time'].toDate();
-        String dateString = date.toString();
-        Future<String?> address = getAddressFromLatLng(location.latitude, location.longitude);
-
-
-        return Container(
-          height: 70,
-          color: _selectedItemIndex == index ? background : null,
-          child: ListTile(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
-                  child: Column(
-                    children: [
-                      BuildImage.buildProfileImage(doc.get('profileUrl'), width: 30),
-                      Text(
-                        doc.get('name'),
-                        style: appTextTheme().labelSmall,
-                      )
-                    ],
-                  ),
-                ),
-                Flexible(
-                  flex: 3,
-                  child: Column(
-                    children: [
-                      Container(
-                        child: Row(
-                          children: [
-                            BuildImage.buildImage(AppImages.circleIconImagePath),
-                            SizedBox(
-                              width: 15,
-                            ),
-                            Flexible(child: Text('출발지 : ${address}', style: appTextTheme().labelSmall))
-                          ],
-                        ),
-                      ),
-                      Container(
-                        child: Row(
-                          children: [
-                            BuildImage.buildImage(AppImages.redCircleIconImagePath),
-                            SizedBox(
-                              width: 15,
-                            ),
-                            Flexible(child: Text(
-                              '도착지 : 공릉역',
-                              style: appTextTheme().labelSmall,
-                            ))
-                          ],
-                        ),
-                      ),
-                      Container(
-                        child: Row(
-                          children: [
-                            BuildImage.buildImage(AppImages.timerIconImagePath, width: 7),
-                            SizedBox(
-                              width: 13,
-                            ),
-                            Flexible(child: Text('출발시간 : ${dateString}',
-                                style: appTextTheme().labelSmall))
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (_isImageVisibleList[
-                index]) // 해당 아이템의 이미지 표시 상태가 참이면 이미지 표시
+          return Container(
+            height: 70,
+            color: _selectedItemIndex == index ? background : null,
+            child: ListTile(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(0,0,0,15),
-                    child: GestureDetector(
-                      onTap: () {
-                        // 여기에 이미지를 눌렀을 때 실행할 로직을 작성합니다.
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => CarDetail(
-                                  markers: _markers,
-                                  center: _center,
-                                  onMapCreated: (controller) {
-                                    mapController = controller;
-                                  },
-                                  currentLocationFunction: _currentLocation,
-                                )));
-                      },
-                      child: BuildImage.buildImage(AppImages.arrowIconImagePath, width: 20),
+                    padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
+                    child: Column(
+                      children: [
+                        BuildImage.buildProfileImage(doc.get('profileUrl'),
+                            width: 30),
+                        Text(
+                          doc.get('name'),
+                          style: appTextTheme().labelSmall,
+                        )
+                      ],
                     ),
                   ),
-              ],
-            ),
-            onTap: () {
-              setState(() {
-                if (_selectedItemIndex != null) {
+                  Flexible(
+                    flex: 3,
+                    child: Column(
+                      children: [
+                        Container(
+                          child: Row(
+                            children: [
+                              BuildImage.buildImage(
+                                  AppImages.circleIconImagePath),
+                              SizedBox(
+                                width: 15,
+                              ),
+                              Flexible(
+                                  child: Text('출발지 : ${address}',
+                                      style: appTextTheme().labelSmall))
+                            ],
+                          ),
+                        ),
+                        Container(
+                          child: Row(
+                            children: [
+                              BuildImage.buildImage(
+                                  AppImages.redCircleIconImagePath),
+                              SizedBox(
+                                width: 15,
+                              ),
+                              Flexible(
+                                  child: Text(
+                                '도착지 : 공릉역',
+                                style: appTextTheme().labelSmall,
+                              ))
+                            ],
+                          ),
+                        ),
+                        Container(
+                          child: Row(
+                            children: [
+                              BuildImage.buildImage(
+                                  AppImages.timerIconImagePath,
+                                  width: 7),
+                              SizedBox(
+                                width: 13,
+                              ),
+                              Flexible(
+                                  child: Text('출발시간 : ${dateString}',
+                                      style: appTextTheme().labelSmall))
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (_isImageVisibleList[
+                      index]) // 해당 아이템의 이미지 표시 상태가 참이면 이미지 표시
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
+                      child: GestureDetector(
+                        onTap: () {
+                          // 여기에 이미지를 눌렀을 때 실행할 로직을 작성합니다.
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CarDetail(
+                                        markers: _markers,
+                                        center: _center,
+                                        onMapCreated: (controller) {
+                                          mapController = controller;
+                                        },
+                                        currentLocationFunction:
+                                            _currentLocation,
+                                      )));
+                        },
+                        child: BuildImage.buildImage(
+                            AppImages.arrowIconImagePath,
+                            width: 20),
+                      ),
+                    ),
+                ],
+              ),
+              onTap: () {
+                setState(() {
+                  if (_selectedItemIndex != null) {
 // 이전에 선택된 아이템이 있으면
-                  _isImageVisibleList[_selectedItemIndex!] =
-                  false; // 이전에 선택된 아이템의 이미지를 숨김
-                }
-                _selectedItemIndex = index;
-                _isImageVisibleList[index] = true;
-              });
-              _onMapCreated(
-                  mapController, items[index]['출발지']!, items[index]['도착지']!);
-            },
-          ),
-        );
-      }
-    );
+                    _isImageVisibleList[_selectedItemIndex!] =
+                        false; // 이전에 선택된 아이템의 이미지를 숨김
+                  }
+                  _selectedItemIndex = index;
+                  _isImageVisibleList[index] = true;
+                });
+                _onMapCreated(
+                    mapController, items[index]['출발지']!, items[index]['도착지']!);
+              },
+            ),
+          );
+        });
   }
 
   void _currentLocation() async {
     final currentLocation = await mapService.getCurrentLocation();
 
     setState(() {
+      _markers.remove(_center);
       _center = currentLocation;
       _markers.add(
         Marker(
@@ -247,17 +259,14 @@ class _CarMainState extends State<CarMain> {
         ),
       );
     });
-
-
-
     mapController.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(
         target: _center!,
         zoom: 15.0,
       ),
     ));
-  }
 
+  }
 
   Future<void> _onMapCreated(GoogleMapController controller, LatLng departure,
       LatLng destination) async {
@@ -281,6 +290,7 @@ class _CarMainState extends State<CarMain> {
 
     mapService.moveCamera(controller, departure, destination);
   }
+
   Future<void> checkDocumentExists(DocumentSnapshot car) async {
     final docSnapshot = await FirebaseFirestore.instance
         .collection('disablePerson')
@@ -294,9 +304,11 @@ class _CarMainState extends State<CarMain> {
     }
   }
 
-  Future<String?> getAddressFromLatLng(double latitude, double longitude) async {
+  Future<String?> getAddressFromLatLng(
+      double latitude, double longitude) async {
     try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(latitude, longitude);
 
       if (placemarks != null && placemarks.isNotEmpty) {
         final Placemark pos = placemarks[0];
