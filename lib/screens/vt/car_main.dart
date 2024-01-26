@@ -9,8 +9,10 @@ import 'package:pathpal/widgets/appBar.dart';
 
 import '../../colors.dart';
 import '../../utils/app_images.dart';
+import '../../utils/format_time.dart';
 import '../../widgets/build_image.dart';
 import '../../widgets/google_map.dart';
+import '../../widgets/item_info_list.dart';
 
 class CarMain extends StatefulWidget {
   const CarMain({Key? key}) : super(key: key);
@@ -135,7 +137,7 @@ class _CarMainState extends State<CarMain> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
+                    padding: const EdgeInsets.fromLTRB(0, 5, 30, 0),
                     child: Column(
                       children: [
                         BuildImage.buildProfileImage(doc.get('profileUrl'),
@@ -151,51 +153,28 @@ class _CarMainState extends State<CarMain> {
                     flex: 3,
                     child: Column(
                       children: [
-                        Container(
-                          child: Row(
-                            children: [
-                              BuildImage.buildImage(
-                                  AppImages.circleIconImagePath),
-                              SizedBox(
-                                width: 15,
-                              ),
-                              Flexible(
-                                  child: Text('출발지 : ${address}',
-                                      style: appTextTheme().labelSmall))
-                            ],
-                          ),
+                        ItemInfoList(
+                          imagePath: AppImages.circleIconImagePath,
+                          label: '출발지',
+                          data: location.toString(),
                         ),
-                        Container(
-                          child: Row(
-                            children: [
-                              BuildImage.buildImage(
-                                  AppImages.redCircleIconImagePath),
-                              SizedBox(
-                                width: 15,
-                              ),
-                              Flexible(
-                                  child: Text(
-                                '도착지 : 공릉역',
-                                style: appTextTheme().labelSmall,
-                              ))
-                            ],
-                          ),
+                        SizedBox(
+                          height: 5,
                         ),
-                        Container(
-                          child: Row(
-                            children: [
-                              BuildImage.buildImage(
-                                  AppImages.timerIconImagePath,
-                                  width: 7),
-                              SizedBox(
-                                width: 13,
-                              ),
-                              Flexible(
-                                  child: Text('출발시간 : ${dateString}',
-                                      style: appTextTheme().labelSmall))
-                            ],
-                          ),
+                        ItemInfoList(
+                          imagePath: AppImages.redCircleIconImagePath,
+                          label: '도착지',
+                          data: location.toString(),
                         ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        ItemInfoList(
+                            imagePath: AppImages.timerIconImagePath,
+                            label: '출발시간',
+                            data: FormatTime.formatTime(
+                              date,
+                            )),
                       ],
                     ),
                   ),
@@ -217,6 +196,8 @@ class _CarMainState extends State<CarMain> {
                                         },
                                         currentLocationFunction:
                                             _currentLocation,
+                                        dpSnapshot: snapshot,
+                                        carSnapshot: car,
                                       )));
                         },
                         child: BuildImage.buildImage(
@@ -265,7 +246,6 @@ class _CarMainState extends State<CarMain> {
         zoom: 15.0,
       ),
     ));
-
   }
 
   Future<void> _onMapCreated(GoogleMapController controller, LatLng departure,
