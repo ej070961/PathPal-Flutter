@@ -4,7 +4,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pathpal/screens/dp/Signup/signup_1.dart';
 import 'package:pathpal/screens/vt/login.dart';
-import 'package:pathpal/widgets/navBar.dart';
+import 'package:pathpal/widgets/navbar.dart';
 import '../../service/auth_service.dart';
 import 'package:pathpal/colors.dart';
 import '../../service/firestore/user_service.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pathpal/colors.dart';
-import 'package:pathpal/screens/dp/carService.dart';
-import 'package:pathpal/screens/dp/walkService.dart';
+import 'package:pathpal/screens/dp/car_service.dart';
+import 'package:pathpal/screens/dp/walk_service.dart';
 import '../../widgets/appBar.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

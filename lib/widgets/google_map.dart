@@ -7,8 +7,8 @@ class MyGoogleMap  extends StatelessWidget{
   final Function? onMapCreated;
   final Function? currentLocationFunction;
 
-  MyGoogleMap({
-    Key? key,
+  MyGoogleMap({ 
+    super.key, 
     this.center,
     required this.markers,
     this.onMapCreated,
@@ -43,10 +43,10 @@ class MyGoogleMap  extends StatelessWidget{
                 currentLocationFunction!();
               }
             },
-            child: Icon(Icons.my_location),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(30.0)),
             ),
+            child: Icon(Icons.my_location),
           ),
         ),
       ],
