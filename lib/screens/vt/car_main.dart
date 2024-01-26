@@ -113,8 +113,8 @@ class _CarMainState extends State<CarMain> {
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance.collection('disabledPerson').doc(car['dp_uid']).snapshots(),
       builder: (context, snapshot) {
-        
-        
+
+
         if (!snapshot.hasData) {
           // 데이터가 로드되지 않았을 때의 처리를 해줍니다.
           return CircularProgressIndicator();
@@ -126,7 +126,7 @@ class _CarMainState extends State<CarMain> {
         String dateString = date.toString();
         Future<String?> address = getAddressFromLatLng(location.latitude, location.longitude);
 
-        
+
         return Container(
           height: 70,
           color: _selectedItemIndex == index ? background : null,
@@ -215,10 +215,19 @@ class _CarMainState extends State<CarMain> {
               ],
             ),
             onTap: () {
-              // ... 기존 코드 ...
+              setState(() {
+                if (_selectedItemIndex != null) {
+// 이전에 선택된 아이템이 있으면
+                  _isImageVisibleList[_selectedItemIndex!] =
+                  false; // 이전에 선택된 아이템의 이미지를 숨김
+                }
+                _selectedItemIndex = index;
+                _isImageVisibleList[index] = true;
+              });
+              _onMapCreated(
+                  mapController, items[index]['출발지']!, items[index]['도착지']!);
             },
           ),
-
         );
       }
     );
