@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pathpal/screens/vt/car_detail.dart';
 import 'package:pathpal/service/map_service.dart';
@@ -88,7 +89,6 @@ class _CarMainState extends State<CarMain> {
                         itemCount: snapshot.data?.docs.length ?? 0,
                         itemBuilder: (BuildContext context, int index) {
                           DocumentSnapshot car = snapshot.data!.docs[index];
-
                           return Container(
                             height: 70,
                             color: _selectedItemIndex == index ? background : null,
@@ -109,116 +109,118 @@ class _CarMainState extends State<CarMain> {
 
 
   Widget _buildListItem(BuildContext context, int index, DocumentSnapshot car) {
-    return Container(
-      height: 70,
-      color: _selectedItemIndex == index ? background : null,
-      child: ListTile(
-        title: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
-              child: Column(
-                children: [
-                  BuildImage.buildImage(AppImages.basicProfileImagePath, width: 30),
-                  Text(
-                    '전창하',
-                    style: appTextTheme().labelSmall,
-                  )
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 3,
-              child: Column(
-                children: [
-                  Container(
-                    width: 200,
-                    child: Row(
-                      children: [
-                        BuildImage.buildImage(AppImages.circleIconImagePath),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        Text('출발지 : 공릉역', style: appTextTheme().labelSmall)
-                      ],
-                    ),
+
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance.collection('disabledPerson').doc(car['dp_uid']).snapshots(),
+      builder: (context, snapshot) {
+        
+        
+        if (!snapshot.hasData) {
+          // 데이터가 로드되지 않았을 때의 처리를 해줍니다.
+          return CircularProgressIndicator();
+        }
+        var doc = snapshot.data!;
+        print(snapshot.data?.get('profileUrl'));
+        GeoPoint location = car['departure_address'];
+        DateTime date = car['departure_time'].toDate();
+        String dateString = date.toString();
+        Future<String?> address = getAddressFromLatLng(location.latitude, location.longitude);
+
+        
+        return Container(
+          height: 70,
+          color: _selectedItemIndex == index ? background : null,
+          child: ListTile(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
+                  child: Column(
+                    children: [
+                      BuildImage.buildProfileImage(doc.get('profileUrl'), width: 30),
+                      Text(
+                        doc.get('name'),
+                        style: appTextTheme().labelSmall,
+                      )
+                    ],
                   ),
-                  Container(
-                    width: 200,
-                    child: Row(
-                      children: [
-                        BuildImage.buildImage(AppImages.redCircleIconImagePath),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        Text(
-                          '도착지 : 하계역',
-                          style: appTextTheme().labelSmall,
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: 200,
-                    child: Row(
-                      children: [
-                        BuildImage.buildImage(AppImages.timerIconImagePath, width: 7),
-                        SizedBox(
-                          width: 13,
-                        ),
-                        Text('출발시간 : 오늘(월) 17:35',
-                            style: appTextTheme().labelSmall)
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(50, 15, 0, 0),
-                child: Column(
-                  children: [
-                    if (_isImageVisibleList[
-                        index]) // 해당 아이템의 이미지 표시 상태가 참이면 이미지 표시
-                      GestureDetector(
-                        onTap: () {
-                          // 여기에 이미지를 눌렀을 때 실행할 로직을 작성합니다.
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => CarDetail(
-                                        markers: _markers,
-                                        center: _center,
-                                        onMapCreated: (controller) {
-                                          mapController = controller;
-                                        },
-                                        currentLocationFunction: _currentLocation,
-                                      )));
-                        },
-                        child: BuildImage.buildImage(AppImages.arrowIconImagePath, width: 20),
-                      ),
-                  ],
                 ),
-              ),
+                Flexible(
+                  flex: 3,
+                  child: Column(
+                    children: [
+                      Container(
+                        child: Row(
+                          children: [
+                            BuildImage.buildImage(AppImages.circleIconImagePath),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            Flexible(child: Text('출발지 : ${address}', style: appTextTheme().labelSmall))
+                          ],
+                        ),
+                      ),
+                      Container(
+                        child: Row(
+                          children: [
+                            BuildImage.buildImage(AppImages.redCircleIconImagePath),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            Flexible(child: Text(
+                              '도착지 : 공릉역',
+                              style: appTextTheme().labelSmall,
+                            ))
+                          ],
+                        ),
+                      ),
+                      Container(
+                        child: Row(
+                          children: [
+                            BuildImage.buildImage(AppImages.timerIconImagePath, width: 7),
+                            SizedBox(
+                              width: 13,
+                            ),
+                            Flexible(child: Text('출발시간 : ${dateString}',
+                                style: appTextTheme().labelSmall))
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (_isImageVisibleList[
+                index]) // 해당 아이템의 이미지 표시 상태가 참이면 이미지 표시
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0,0,0,15),
+                    child: GestureDetector(
+                      onTap: () {
+                        // 여기에 이미지를 눌렀을 때 실행할 로직을 작성합니다.
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CarDetail(
+                                  markers: _markers,
+                                  center: _center,
+                                  onMapCreated: (controller) {
+                                    mapController = controller;
+                                  },
+                                  currentLocationFunction: _currentLocation,
+                                )));
+                      },
+                      child: BuildImage.buildImage(AppImages.arrowIconImagePath, width: 20),
+                    ),
+                  ),
+              ],
             ),
-          ],
-        ),
-        onTap: () {
-          setState(() {
-            if (_selectedItemIndex != null) {
-              // 이전에 선택된 아이템이 있으면
-              _isImageVisibleList[_selectedItemIndex!] =
-                  false; // 이전에 선택된 아이템의 이미지를 숨김
-            }
-            _selectedItemIndex = index;
-            _isImageVisibleList[index] = true;
-          });
-          _onMapCreated(
-              mapController, items[index]['출발지']!, items[index]['도착지']!);
-        },
-      ),
+            onTap: () {
+              // ... 기존 코드 ...
+            },
+          ),
+
+        );
+      }
     );
   }
 
@@ -237,6 +239,8 @@ class _CarMainState extends State<CarMain> {
       );
     });
 
+
+
     mapController.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(
         target: _center!,
@@ -244,6 +248,7 @@ class _CarMainState extends State<CarMain> {
       ),
     ));
   }
+
 
   Future<void> _onMapCreated(GoogleMapController controller, LatLng departure,
       LatLng destination) async {
@@ -266,5 +271,31 @@ class _CarMainState extends State<CarMain> {
     });
 
     mapService.moveCamera(controller, departure, destination);
+  }
+  Future<void> checkDocumentExists(DocumentSnapshot car) async {
+    final docSnapshot = await FirebaseFirestore.instance
+        .collection('disablePerson')
+        .doc(car['dp_uid'])
+        .get();
+
+    if (docSnapshot.exists) {
+      print('Document exists on the database');
+    } else {
+      print('Document does not exist on the database');
+    }
+  }
+
+  Future<String?> getAddressFromLatLng(double latitude, double longitude) async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
+
+      if (placemarks != null && placemarks.isNotEmpty) {
+        final Placemark pos = placemarks[0];
+        return pos.street;
+      }
+      return "No address available";
+    } catch (e) {
+      return "Error : ${e.toString()}";
+    }
   }
 }
