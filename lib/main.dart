@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:pathpal/screens/dp/login.dart';
 import 'package:pathpal/screens/vt/car_main.dart';
 import 'package:pathpal/screens/vt/login.dart';
@@ -15,7 +16,7 @@ void main() async {
   );
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  runApp(const MyApp());
+  initializeDateFormatting().then((_) => runApp(MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -25,13 +26,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     FlutterNativeSplash.remove();
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        locale: const Locale('ko', 'KO'),
         title: 'pathpal',
         theme: ThemeData(
           colorScheme: appColorScheme(), // 컬러 테마 적용
           textTheme: appTextTheme(), //폰트 테마 적용
           useMaterial3: true,
         ),
-        home: DpNavBar() //Disabled persion 로그인 화면
+        home: VtLogin() //Disabled persion 로그인 화면
         );
   }
 }

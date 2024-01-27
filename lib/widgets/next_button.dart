@@ -20,6 +20,7 @@ class _NextButtonState extends State<NextButton> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity, // 너비를 화면 너비로 설정
+      height: 50,
       child: ElevatedButton(
         onPressed: widget.onPressed,
         child: Text(
