@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -10,12 +11,14 @@ import 'next_button.dart';
 class ModalBottomSheet extends StatefulWidget {
   final String timeTitle;
   final String nextButtonTitle;
+  final Function(DateTime)? onPressedToFirestore;
   final VoidCallback? onPressed;
 
   ModalBottomSheet(
       {required this.timeTitle,
       required this.nextButtonTitle,
-      required this.onPressed});
+      this.onPressed,
+      this.onPressedToFirestore});
 
   @override
   _ModalBottomSheetState createState() => _ModalBottomSheetState();
@@ -23,7 +26,8 @@ class ModalBottomSheet extends StatefulWidget {
   static show(BuildContext context,
       {required String timeTitle,
       required String nextButtonTitle,
-      required VoidCallback onPressed}) {
+      VoidCallback? onPressed,
+      Function(DateTime)? onPressedToFirestore}) {
     showModalBottomSheet(
         context: context,
         shape: const RoundedRectangleBorder(
@@ -33,9 +37,11 @@ class ModalBottomSheet extends StatefulWidget {
         ),
         builder: (BuildContext context) {
           return ModalBottomSheet(
-              timeTitle: timeTitle,
-              nextButtonTitle: nextButtonTitle,
-              onPressed: onPressed);
+            timeTitle: timeTitle,
+            nextButtonTitle: nextButtonTitle,
+            onPressed: onPressed,
+            onPressedToFirestore: onPressedToFirestore,
+          );
         });
   }
 }
@@ -99,11 +105,11 @@ class _ModalBottomSheetState extends State<ModalBottomSheet> {
             child: NextButton(
               title: "${widget.nextButtonTitle}",
               onPressed: () async {
-                if (selectedDate == null) {
-                  print("none");
-                  return;
-                } else {
-                  print("selectedDate : " + selectedDate.toString());
+                if (widget.onPressedToFirestore != null) {
+                  print("DB 연결 pressed일 때 ");
+                  widget.onPressedToFirestore?.call(selectedDate);
+                } else if (widget.onPressed != null) {
+                  print("일반 pressed일때 ");
                 }
               },
             ),
