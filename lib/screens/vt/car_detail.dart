@@ -127,10 +127,20 @@ class _CarDetailState extends State<CarDetail> {
           NextButton(
             title: "요청 수락하기",
             onPressed: () {
-              ModalBottomSheet.show(context,
-                  timeTitle: '도착시각', nextButtonTitle: '다음', onPressed: () {
-                print('Next button pressed');
-              });
+              ModalBottomSheet.show(
+                context,
+                timeTitle: '도착시각',
+                nextButtonTitle: '다음',
+                onPressedToFirestore: (selectedDate) {
+                  print("저장로직");
+                  FirebaseFirestore.instance
+                      .collection('cars')
+                      .doc(widget.carSnapshot.id)
+                      .update({'volunteer_time' : selectedDate})
+                      .then((_) => print('Updated volunteer_time in Firestore'))
+                      .catchError((error) => print('Update failed: $error'));
+                },
+              );
             },
           ),
         ],

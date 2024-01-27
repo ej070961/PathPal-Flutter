@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -10,12 +11,14 @@ import 'next_button.dart';
 class ModalBottomSheet extends StatefulWidget {
   final String timeTitle;
   final String nextButtonTitle;
+  final Function(DateTime)? onPressedToFirestore;
   final VoidCallback? onPressed;
 
   ModalBottomSheet(
       {required this.timeTitle,
       required this.nextButtonTitle,
-      required this.onPressed});
+      this.onPressed,
+      this.onPressedToFirestore});
 
   @override
   _ModalBottomSheetState createState() => _ModalBottomSheetState();
@@ -23,7 +26,8 @@ class ModalBottomSheet extends StatefulWidget {
   static show(BuildContext context,
       {required String timeTitle,
       required String nextButtonTitle,
-      required VoidCallback onPressed}) {
+      VoidCallback? onPressed,
+      Function(DateTime)? onPressedToFirestore}) {
     showModalBottomSheet(
         context: context,
         shape: const RoundedRectangleBorder(
@@ -33,14 +37,18 @@ class ModalBottomSheet extends StatefulWidget {
         ),
         builder: (BuildContext context) {
           return ModalBottomSheet(
-              timeTitle: timeTitle,
-              nextButtonTitle: nextButtonTitle,
-              onPressed: onPressed);
+            timeTitle: timeTitle,
+            nextButtonTitle: nextButtonTitle,
+            onPressed: onPressed,
+            onPressedToFirestore: onPressedToFirestore,
+          );
         });
   }
 }
 
 class _ModalBottomSheetState extends State<ModalBottomSheet> {
+  DateTime selectedDate = DateTime.now();
+
   @override
   void initState() {
     super.initState();
@@ -63,7 +71,7 @@ class _ModalBottomSheetState extends State<ModalBottomSheet> {
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                '${widget.timeTitle}     ${DateFormat.yMd('ko_KR').add_Hm().format(now)}',
+                '${widget.timeTitle}     ${DateFormat.yMd('ko_KR').add_Hm().format(selectedDate)}',
                 style: appTextTheme().labelMedium,
               ),
             ),
@@ -77,7 +85,11 @@ class _ModalBottomSheetState extends State<ModalBottomSheet> {
               padding: const EdgeInsets.all(8.0),
               child: CupertinoDatePicker(
                 initialDateTime: initialDateTime,
-                onDateTimeChanged: (DateTime newDate) {},
+                onDateTimeChanged: (DateTime newDate) {
+                  setState(() {
+                    selectedDate = newDate;
+                  });
+                },
                 use24hFormat: true,
                 minimumDate: DateTime(2024, 1),
                 maximumDate: DateTime(2024, 12, 31),
@@ -92,7 +104,14 @@ class _ModalBottomSheetState extends State<ModalBottomSheet> {
           Container(
             child: NextButton(
               title: "${widget.nextButtonTitle}",
-              onPressed: widget.onPressed,
+              onPressed: () async {
+                if (widget.onPressedToFirestore != null) {
+                  print("DB 연결 pressed일 때 ");
+                  widget.onPressedToFirestore?.call(selectedDate);
+                } else if (widget.onPressed != null) {
+                  print("일반 pressed일때 ");
+                }
+              },
             ),
           ),
         ],
