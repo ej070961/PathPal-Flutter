@@ -2,12 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:pathpal/colors.dart';
 import 'package:pathpal/theme.dart';
 import 'package:pathpal/widgets/google_map.dart';
 import 'package:pathpal/widgets/item_info_list.dart';
+import 'package:pathpal/widgets/modal_bottom_sheet.dart';
 import 'package:pathpal/widgets/next_button.dart';
-
 
 import '../../utils/app_images.dart';
 import '../../utils/format_time.dart';
@@ -21,24 +22,22 @@ class CarDetail extends StatefulWidget {
   final AsyncSnapshot<DocumentSnapshot<Object?>> dpSnapshot;
   final DocumentSnapshot carSnapshot;
 
-  CarDetail(
-      {Key? key,
-      this.center,
-      required this.markers,
-      this.onMapCreated,
-      this.currentLocationFunction,
-      required this.dpSnapshot,
-      required this.carSnapshot
-      });
+  CarDetail({
+    Key? key,
+    this.center,
+    required this.markers,
+    this.onMapCreated,
+    this.currentLocationFunction,
+    required this.dpSnapshot,
+    required this.carSnapshot,
+  });
 
   @override
   State<CarDetail> createState() => _CarDetailState();
 }
 
 class _CarDetailState extends State<CarDetail> {
-
   DateTime selectedDate = DateTime.now();
-
 
   @override
   Widget build(BuildContext context) {
@@ -50,15 +49,14 @@ class _CarDetailState extends State<CarDetail> {
     var location = widget.carSnapshot['departure_address'];
     var time = widget.carSnapshot['departure_time'].toDate();
 
-
-
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-            onPressed: () {
-              print("뒤로가기버튼");
-            },
-            icon: Icon(Icons.arrow_back)),
+          onPressed: () {
+            print("뒤로가기버튼");
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
         backgroundColor: background,
         toolbarHeight: 30.0,
       ),
@@ -82,9 +80,9 @@ class _CarDetailState extends State<CarDetail> {
                   children: [
                     Text("   ${name}", style: appTextTheme().labelSmall),
                     Text("  |  ", style: appTextTheme().labelSmall),
-                    Text("${disabilityType}", style: appTextTheme().labelSmall,),
+                    Text("${disabilityType}", style: appTextTheme().labelSmall),
                     Text("  |  ", style: appTextTheme().labelSmall),
-                    Text("${wcUseText}", style: appTextTheme().labelSmall)
+                    Text("${wcUseText}", style: appTextTheme().labelSmall),
                   ],
                 ),
                 SizedBox(
@@ -114,8 +112,7 @@ class _CarDetailState extends State<CarDetail> {
                       data: FormatTime.formatTime(time),
                     ),
                   ],
-                )
-
+                ),
               ],
             ),
           ),
@@ -128,78 +125,14 @@ class _CarDetailState extends State<CarDetail> {
             ),
           ),
           NextButton(
-              title: "요청 수락하기",
-              onPressed: () {
-                showModalBottomSheet(
-                    context: context,
-                    shape: const RoundedRectangleBorder( // <-- SEE HERE
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(10.0),
-                      ),
-                    ),
-                    isScrollControlled: true,
-                    builder: (BuildContext context) {
-
-                      DateTime now = DateTime.now();
-                      DateTime initialDateTime = DateTime(now.year, now.month, now.day, now.hour, now.minute ~/ 5 * 5);
-
-                      return Container(
-                        height: MediaQuery.of(context).size.height * 0.3,
-                        child: Column(
-                          children: <Widget>[
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left : 30.0),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child:  Text(
-                                  '${selectedDate.toString()}',  // 선택된 날짜와 시간 표시
-                                  style: appTextTheme().labelMedium,
-                                ),
-                              ),
-                            ),
-                            Divider(color: gray200),
-                            SizedBox(
-                              height: 15,
-                            ),
-                            Expanded(  // DatePicker 위젯이 차지하는 영역을 최대로 확장
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: CupertinoDatePicker(
-                                  initialDateTime: initialDateTime,
-                                  onDateTimeChanged: (DateTime newDate) {
-                                    setState(() {  // 선택된 날짜와 시간 업데이트
-                                      selectedDate = newDate;
-                                    });
-                                  },
-                                  use24hFormat: true,
-                                  minimumDate: DateTime(2024, 1),
-                                  maximumDate: DateTime(2024, 12, 31),
-                                  minuteInterval: 5,
-                                  mode: CupertinoDatePickerMode.dateAndTime,
-
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 15,
-                            ),
-                            Container(
-                              child: NextButton(
-                                title: "다음",
-                                onPressed: (){
-                                },
-                              )
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                );
-              }
-          )
+            title: "요청 수락하기",
+            onPressed: () {
+              ModalBottomSheet.show(context,
+                  timeTitle: '도착시각', nextButtonTitle: '다음', onPressed: () {
+                print('Next button pressed');
+              });
+            },
+          ),
         ],
       ),
     );

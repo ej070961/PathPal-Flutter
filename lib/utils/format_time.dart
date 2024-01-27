@@ -14,4 +14,9 @@ class FormatTime {
       return DateFormat('MM월 dd일 HH:mm').format(time);
     }
   }
+
+  static DateTime formatCheckMinute(DateTime now) {
+    return DateTime(now.year, now.month, now.day, now.hour, now.minute ~/ 5 * 5);
+}
+
 }
