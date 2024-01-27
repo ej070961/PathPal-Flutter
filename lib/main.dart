@@ -25,13 +25,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     FlutterNativeSplash.remove();
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        locale: const Locale('ko', 'KO'),
         title: 'pathpal',
         theme: ThemeData(
           colorScheme: appColorScheme(), // 컬러 테마 적용
           textTheme: appTextTheme(), //폰트 테마 적용
           useMaterial3: true,
         ),
-        home: DpNavBar() //Disabled persion 로그인 화면
+        home: VtLogin() //Disabled persion 로그인 화면
         );
   }
 }
