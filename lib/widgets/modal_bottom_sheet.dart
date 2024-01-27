@@ -41,6 +41,8 @@ class ModalBottomSheet extends StatefulWidget {
 }
 
 class _ModalBottomSheetState extends State<ModalBottomSheet> {
+  DateTime selectedDate = DateTime.now();
+
   @override
   void initState() {
     super.initState();
@@ -63,7 +65,7 @@ class _ModalBottomSheetState extends State<ModalBottomSheet> {
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                '${widget.timeTitle}     ${DateFormat.yMd('ko_KR').add_Hm().format(now)}',
+                '${widget.timeTitle}     ${DateFormat.yMd('ko_KR').add_Hm().format(selectedDate)}',
                 style: appTextTheme().labelMedium,
               ),
             ),
@@ -77,7 +79,11 @@ class _ModalBottomSheetState extends State<ModalBottomSheet> {
               padding: const EdgeInsets.all(8.0),
               child: CupertinoDatePicker(
                 initialDateTime: initialDateTime,
-                onDateTimeChanged: (DateTime newDate) {},
+                onDateTimeChanged: (DateTime newDate) {
+                  setState(() {
+                    selectedDate = newDate;
+                  });
+                },
                 use24hFormat: true,
                 minimumDate: DateTime(2024, 1),
                 maximumDate: DateTime(2024, 12, 31),
@@ -92,7 +98,14 @@ class _ModalBottomSheetState extends State<ModalBottomSheet> {
           Container(
             child: NextButton(
               title: "${widget.nextButtonTitle}",
-              onPressed: widget.onPressed,
+              onPressed: () async {
+                if (selectedDate == null) {
+                  print("none");
+                  return;
+                } else {
+                  print("selectedDate : " + selectedDate.toString());
+                }
+              },
             ),
           ),
         ],
