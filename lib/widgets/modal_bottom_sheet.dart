@@ -12,22 +12,28 @@ class ModalBottomSheet extends StatefulWidget {
   final String timeTitle;
   final String nextButtonTitle;
   final Function(DateTime)? onPressedToFirestore;
-  final VoidCallback? onPressed;
+  final Function(DateTime)? onPressed;
+  DateTime? initialDateTime;
 
-  ModalBottomSheet(
-      {required this.timeTitle,
-      required this.nextButtonTitle,
-      this.onPressed,
-      this.onPressedToFirestore});
+  ModalBottomSheet({
+    super.key, 
+    required this.timeTitle,
+    required this.nextButtonTitle,
+    this.onPressed,
+    this.onPressedToFirestore,
+    this.initialDateTime
+    });
 
   @override
   _ModalBottomSheetState createState() => _ModalBottomSheetState();
 
-  static show(BuildContext context,
-      {required String timeTitle,
+  static show(BuildContext context,{
+      required String timeTitle,
       required String nextButtonTitle,
-      VoidCallback? onPressed,
-      Function(DateTime)? onPressedToFirestore}) {
+      Function(DateTime)? onPressed,
+      Function(DateTime)? onPressedToFirestore,
+      DateTime? initialDateTime
+  }){
     showModalBottomSheet(
         context: context,
         shape: const RoundedRectangleBorder(
@@ -41,25 +47,27 @@ class ModalBottomSheet extends StatefulWidget {
             nextButtonTitle: nextButtonTitle,
             onPressed: onPressed,
             onPressedToFirestore: onPressedToFirestore,
+            initialDateTime: initialDateTime,
           );
-        });
+    });
   }
 }
 
 class _ModalBottomSheetState extends State<ModalBottomSheet> {
-  DateTime selectedDate = DateTime.now();
+  late DateTime selectedDate;
 
   @override
   void initState() {
     super.initState();
+    selectedDate = widget.initialDateTime ?? DateTime.now();
   }
 
   @override
   Widget build(BuildContext context) {
-    DateTime now = DateTime.now();
-    DateTime initialDateTime = FormatTime.formatCheckMinute(now);
+    // DateTime now = DateTime.now();
+    DateTime initialDateTime = FormatTime.formatCheckMinute(selectedDate);
 
-    return Container(
+    return SizedBox(
       height: MediaQuery.of(context).size.height * 0.3,
       child: Column(
         children: <Widget>[
@@ -103,14 +111,17 @@ class _ModalBottomSheetState extends State<ModalBottomSheet> {
           ),
           Container(
             child: NextButton(
-              title: "${widget.nextButtonTitle}",
+              title: widget.nextButtonTitle,
               onPressed: () async {
                 if (widget.onPressedToFirestore != null) {
                   print("DB 연결 pressed일 때 ");
                   widget.onPressedToFirestore?.call(selectedDate);
                 } else if (widget.onPressed != null) {
                   print("일반 pressed일때 ");
+                  widget.onPressed?.call(selectedDate);
                 }
+                
+                Navigator.pop(context);
               },
             ),
           ),

@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:pathpal/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:pathpal/widgets/modal_bottom_sheet.dart';
 
 class DepartureTimeWidget extends StatefulWidget {
-  final DateTime departureTime;
+  late DateTime departureTime;
 
-  DepartureTimeWidget({required this.departureTime, Key? key}) : super(key: key);
+  DepartureTimeWidget(
+    {required this.departureTime, 
+    Key? key
+    }) : super(key: key);
 
   @override
   _DepartureTimeWidgetState createState() => _DepartureTimeWidgetState();
@@ -15,21 +19,25 @@ class DepartureTimeWidget extends StatefulWidget {
 class _DepartureTimeWidgetState extends State<DepartureTimeWidget> {
   late String formattedDateTime;
 
+
   @override
   void initState() {
     super.initState();
     initializeDateFormatting('ko_KR', null).then((_) {
-      setState(() {
-        formattedDateTime =
-            DateFormat('M/d (E) HH:mm', 'ko_KR').format(widget.departureTime);
-      });
+     updateFormattedDateTime();
+    });
+  }
+
+  void updateFormattedDateTime() {
+    setState(() {
+      formattedDateTime =
+          DateFormat('M/d (E) HH:mm', 'ko_KR').format(widget.departureTime);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 50,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -63,10 +71,28 @@ class _DepartureTimeWidgetState extends State<DepartureTimeWidget> {
           GestureDetector(
             child: Text(
               "변경",
-              style: TextStyle(
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: mainAccentColor,
-              ),
+              ) ?? TextStyle(),           
             ),
+            onTap: () {
+             ModalBottomSheet.show(
+                  context,
+                  timeTitle: '출발시각',
+                  nextButtonTitle: '선택완료',
+                  initialDateTime: widget.departureTime,
+                  onPressed: (DateTime selectedDate) {
+                    print('변경 전 departureTime: ${widget.departureTime}');
+                    setState(() {
+                      print('변경');
+                      widget.departureTime = selectedDate;
+                    });
+                    print('변경 후 departureTime: ${widget.departureTime}');
+                    // Update the formattedDateTime or any other necessary updates
+                    updateFormattedDateTime();
+                    },
+                );
+            }
           ),
         ],
       ),
