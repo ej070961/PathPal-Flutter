@@ -85,6 +85,7 @@ flutter:
     - assets/images/car-image.png
     - assets/images/walk-image.png
     - assets/images/left-arrow-icon.png
+    - assets/images/cancel-icon.png
   fonts:
     - family: login
       fonts:

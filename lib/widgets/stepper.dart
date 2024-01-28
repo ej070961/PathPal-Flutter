@@ -27,7 +27,7 @@ class CustomStepper extends StatelessWidget {
                   int idx = entry.key;
                   String step = entry.value;
 
-                  Color color = idx <= currentStep ? Colors.green : Colors.grey;
+                  Color color = idx <= currentStep ? appColorScheme().onPrimary : Colors.grey;
 
                   return Column(
                     children: [
@@ -54,7 +54,7 @@ class CustomStepper extends StatelessWidget {
                             child: Baseline(
                               baseline: 0,
                               baselineType: TextBaseline.alphabetic,
-                              child: Text(step),
+                              child: Text(step, style: TextStyle(color: color),),
                             ),
                           ),
                         ],

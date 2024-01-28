@@ -5,4 +5,5 @@ class AppImages {
   static const String timerIconImagePath = 'assets/images/timer-icon.png';
   static const String arrowIconImagePath = 'assets/images/arrow-icon.png';
   static const String leftArrowIconImagePath = 'assets/images/left-arrow-icon.png';
+  static const String cancelIconImagePath = 'assets/images/cancel-icon.png';
 }

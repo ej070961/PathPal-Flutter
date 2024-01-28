@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:pathpal/colors.dart';
+import 'package:pathpal/screens/vt/progress_1.dart';
 import 'package:pathpal/theme.dart';
 import 'package:pathpal/utils/dp_data.dart';
 import 'package:pathpal/widgets/dp_info.dart';
@@ -80,8 +81,9 @@ class _CarDetailState extends State<CarDetail> {
                       .collection('cars')
                       .doc(widget.carSnapshot.id)
                       .update({'volunteer_time': selectedDate})
-                      .then((_) => print('Updated volunteer_time in Firestore'))
-                      .catchError((error) => print('Update failed: $error'));
+                      .then((_) => Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => VtProgress(arriveTime: FormatTime.formatTime(selectedDate) + " 도착 예정",)))
+                      .catchError((error) => print('Update failed: $error')));
                 },
               );
             },

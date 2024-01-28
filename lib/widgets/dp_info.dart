@@ -9,15 +9,24 @@ import 'build_image.dart';
 import 'item_info_list.dart';
 
 class DpInfo extends StatelessWidget {
+  final Color backgroundColor;
+
+  DpInfo({this.backgroundColor = Colors.transparent});
+
+
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: backgroundColor,
       width: double.infinity,
       height: 200,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          SizedBox(
+            height: 15,
+          ),
           Container(
             width: 50,
             child: BuildImage.buildProfileImage(DpData.profileUrl),

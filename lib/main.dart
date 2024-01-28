@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
           textTheme: appTextTheme(), //폰트 테마 적용
           useMaterial3: true,
         ),
-        home: VtProgress() //Disabled persion 로그인 화면
+        home: VtLogin() //Disabled persion 로그인 화면
         );
   }
 }
