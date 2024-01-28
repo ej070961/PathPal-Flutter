@@ -7,7 +7,7 @@ class DpData {
   static bool wcUse = false;
   static String? wcUseText;
   static GeoPoint? location;
-  static DateTime? time;
+  static DateTime time = DateTime.now();
 
   static void setData(dynamic dpSnapshot, dynamic carSnapshot) {
     name = dpSnapshot.data?.get('name');

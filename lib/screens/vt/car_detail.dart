@@ -59,13 +59,7 @@ class _CarDetailState extends State<CarDetail> {
       ),
       body: Column(
         children: [
-          DpInfo(
-              profileUrl: DpData.profileUrl ?? '',
-              name: DpData.name ?? '',
-              disabilityType: DpData.disabilityType ?? '',
-              wcUseText: DpData.wcUseText ?? '',
-              location: DpData.location,
-              time: DpData.time ?? DateTime.now()),
+          DpInfo(),
           Expanded(
             child: MyGoogleMap(
               markers: widget.markers,

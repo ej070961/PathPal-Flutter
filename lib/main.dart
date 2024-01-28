@@ -4,6 +4,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:pathpal/screens/dp/login.dart';
 import 'package:pathpal/screens/vt/car_main.dart';
 import 'package:pathpal/screens/vt/login.dart';
+import 'package:pathpal/screens/vt/progress_1.dart';
 import 'package:pathpal/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
           textTheme: appTextTheme(), //폰트 테마 적용
           useMaterial3: true,
         ),
-        home: DpNavBar() //Disabled persion 로그인 화면
+        home: VtProgress() //Disabled persion 로그인 화면
         );
   }
 }

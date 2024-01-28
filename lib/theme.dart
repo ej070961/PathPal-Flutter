@@ -34,7 +34,7 @@ TextTheme appTextTheme() {
         ),
     titleMedium: GoogleFonts.notoSansKr(
         fontSize: 16, 
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w400,
         letterSpacing: 0.15
         ),
     titleSmall: GoogleFonts.notoSansKr(
