@@ -3,7 +3,6 @@ import 'package:pathpal/colors.dart';
 import 'package:pathpal/screens/dp/chatbot.dart';
 import 'package:pathpal/screens/dp/home.dart';
 import 'package:pathpal/screens/dp/my.dart';
-import 'package:pathpal/widgets/appBar.dart';
 
 class DpNavBar extends StatefulWidget {
   const DpNavBar({super.key});
