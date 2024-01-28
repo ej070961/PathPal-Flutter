@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pathpal/colors.dart';
+import 'package:pathpal/screens/dp/search.dart';
 import 'package:pathpal/utils/app_images.dart';
 import 'package:pathpal/widgets/build_image.dart';
 import 'package:pathpal/widgets/departure_time.dart';
@@ -20,13 +21,20 @@ class _CarServiceState extends State<CarService> {
   final Set<Marker> _markers = {};
   final MapService mapService = MapService();
   LatLng? _center;
-  late DateTime _departureTime; //출발시간
+  late DateTime _departureTime;  //출발시간
+  // late LatLng? _departureAddress;
+  // late LatLng? _destinationAddress;
+
+  String? _departureAddress;
+  String? _destinationAddress;
 
   @override
   void initState() {
     super.initState();
     _center = const LatLng(37.6300, 127.0764);
     _departureTime = DateTime.now();
+    _departureAddress = '';
+    _destinationAddress = '';
   }
 
   void _currentLocation() async {
@@ -45,12 +53,21 @@ class _CarServiceState extends State<CarService> {
     });
   }
 
+  void _goToSearch() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => Search()
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double appBarHeight = AppBar().preferredSize.height;
-    double boxHeight = 257;
-    double mapHeight = screenHeight - appBarHeight - boxHeight;
+    double boxHeight =  MediaQuery.of(context).size.height * 0.3;
+    double mapHeight = screenHeight - appBarHeight - boxHeight -24;
     return Scaffold(
       backgroundColor: Colors.white,
         appBar: AppBar(
@@ -59,6 +76,11 @@ class _CarServiceState extends State<CarService> {
                 Navigator.pop(context);
               },
               icon: Icon(Icons.arrow_back)),
+          centerTitle: true,
+          title: Text(
+            '차량서비스',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
         ),
         body: Column(children: [
           SizedBox(
@@ -73,46 +95,66 @@ class _CarServiceState extends State<CarService> {
               currentLocationFunction: _currentLocation,
             ),
           ),
-          DepartureTimeWidget(departureTime: _departureTime),
-          Container(
-            height: 135,
-            color: Colors.white,
-            padding: EdgeInsets.all(25),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.3,
             child: Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Image.asset('assets/images/circle-icon.png'),
-                    SizedBox(width: 10),
-                    Flexible(
-                      child: Text("출발지 : "),
-                    ),
-                  ],
+                DepartureTimeWidget(departureTime: _departureTime),
+                Expanded(
+                  child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Image.asset('assets/images/circle-icon.png'),
+                            SizedBox(width: 10),
+                            Flexible(
+                              child: Text("출발지 : "),
+                            ),
+                            Flexible(
+                              child: Text('$_departureAddress')
+                            )
+                          ],
+                          ),
+                        onTap: (){
+                          _goToSearch();
+                        },
+                      ),
+                      SizedBox(height: 5),
+                      Divider(color: gray200),
+                      GestureDetector(
+                        child: Expanded(
+                          child: Row(
+                            children: [
+                              Image.asset('assets/images/red-circle-icon.png'),
+                              SizedBox(width: 10), 
+                              Text(
+                                "목적지 : "),
+                              Flexible(child: Text('$_destinationAddress'))
+                              ],
+                            ),
+                        ),
+                        onTap: () {
+                              _goToSearch();
+                            },
+                      ),
+                      SizedBox(height: 5),
+                      Divider(color: gray200),
+                  ]),
+                  ),
                 ),
-               
-                SizedBox(height: 8),
-                Container(height: 1, color: gray200),
-                SizedBox(height: 8),
-                Row(
-                children: [
-                  Image.asset('assets/images/red-circle-icon.png'),
-                  SizedBox(width: 10), 
-                  Text(
-                    "목적지 : ")],
-                ),
-                SizedBox(height: 10),
-                Container(height: 1, color: gray200),
-            ]),
-          ),
-          NextButton(
-          title: "다음",
-          onPressed: ()=> print('click')
-          )
+                NextButton(title: "다음", onPressed: () => print('click'))
+            ])
 
+          ),
+          
         ])
     );
      
  
   }
 }
+
