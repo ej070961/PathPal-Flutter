@@ -5,6 +5,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:pathpal/colors.dart';
 import 'package:pathpal/theme.dart';
+import 'package:pathpal/utils/dp_data.dart';
+import 'package:pathpal/widgets/dp_info.dart';
 import 'package:pathpal/widgets/google_map.dart';
 import 'package:pathpal/widgets/item_info_list.dart';
 import 'package:pathpal/widgets/modal_bottom_sheet.dart';
@@ -41,13 +43,8 @@ class _CarDetailState extends State<CarDetail> {
 
   @override
   Widget build(BuildContext context) {
-    var name = widget.dpSnapshot.data?.get('name');
-    var profileUrl = widget.dpSnapshot.data?.get('profileUrl');
-    var disabilityType = widget.dpSnapshot.data?.get('disabilityType');
-    var wcUse = widget.dpSnapshot.data?.get('wcUse') == "Yes";
-    var wcUseText = wcUse ? "휠체어o" : "휠체어x";
-    var location = widget.carSnapshot['departure_address'];
-    var time = widget.carSnapshot['departure_time'].toDate();
+
+    DpData.setData(widget.dpSnapshot, widget.carSnapshot);
 
     return Scaffold(
       appBar: AppBar(
@@ -62,60 +59,13 @@ class _CarDetailState extends State<CarDetail> {
       ),
       body: Column(
         children: [
-          Container(
-            width: double.infinity,
-            height: 200,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: 50,
-                  child: BuildImage.buildProfileImage(profileUrl),
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("   ${name}", style: appTextTheme().labelSmall),
-                    Text("  |  ", style: appTextTheme().labelSmall),
-                    Text("${disabilityType}", style: appTextTheme().labelSmall),
-                    Text("  |  ", style: appTextTheme().labelSmall),
-                    Text("${wcUseText}", style: appTextTheme().labelSmall),
-                  ],
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Column(
-                  children: [
-                    ItemInfoList(
-                      imagePath: AppImages.circleIconImagePath,
-                      label: '출발지',
-                      data: location.toString(),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    ItemInfoList(
-                      imagePath: AppImages.redCircleIconImagePath,
-                      label: '도착지',
-                      data: location.toString(),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    ItemInfoList(
-                      imagePath: AppImages.timerIconImagePath,
-                      label: '출발시간',
-                      data: FormatTime.formatTime(time),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+          DpInfo(
+              profileUrl: DpData.profileUrl ?? '',
+              name: DpData.name ?? '',
+              disabilityType: DpData.disabilityType ?? '',
+              wcUseText: DpData.wcUseText ?? '',
+              location: DpData.location,
+              time: DpData.time ?? DateTime.now()),
           Expanded(
             child: MyGoogleMap(
               markers: widget.markers,
@@ -132,11 +82,10 @@ class _CarDetailState extends State<CarDetail> {
                 timeTitle: '도착시각',
                 nextButtonTitle: '다음',
                 onPressedToFirestore: (selectedDate) {
-                  print("저장로직");
                   FirebaseFirestore.instance
                       .collection('cars')
                       .doc(widget.carSnapshot.id)
-                      .update({'volunteer_time' : selectedDate})
+                      .update({'volunteer_time': selectedDate})
                       .then((_) => print('Updated volunteer_time in Firestore'))
                       .catchError((error) => print('Update failed: $error'));
                 },
