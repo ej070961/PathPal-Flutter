@@ -8,7 +8,7 @@ class UserService {
 
   void saveVolunteer(Volunteer volunteer) {
     firestore.collection('volunteers').doc(volunteer.uid).set({
-      'uid' : volunteer.uid,
+      'uid': volunteer.uid,
       'profileUrl': volunteer.profileUrl,
       'email': volunteer.email,
       'name': volunteer.name,
@@ -16,7 +16,7 @@ class UserService {
     });
   }
 
- Future<bool> saveDisabledPerson(DisabledPerson dp) async {
+  Future<bool> saveDisabledPerson(DisabledPerson dp) async {
     try {
       await firestore.collection('disabledPerson').doc(dp.uid).set({
         'uid': dp.uid,
@@ -40,26 +40,25 @@ class UserService {
     }
   }
 
+  Future<bool> checkDpUser(String uid) async {
+    try {
+      final userSnapshot =
+          await firestore.collection('disabledPerson').doc(uid).get();
+      return userSnapshot.exists;
+    } catch (e) {
+      // 오류 처리
+      return false;
+    }
+  }
 
-   Future<bool> checkDpUser(String uid) async {
-     try {
-       final userSnapshot = await firestore.collection('disabledPerson').doc(
-           uid).get();
-       return userSnapshot.exists;
-     } catch (e) {
-       // 오류 처리
-       return false;
-     }
-   }
-
-    Future<bool> checkVtUser(String uid) async {
-      try {
-        final userSnapshot = await firestore.collection('volunteers').doc(
-            uid).get();
-        return userSnapshot.exists;
-      } catch (e) {
-        // 오류 처리
-        return false;
-      }
+  Future<bool> checkVtUser(String uid) async {
+    try {
+      final userSnapshot =
+          await firestore.collection('volunteers').doc(uid).get();
+      return userSnapshot.exists;
+    } catch (e) {
+      // 오류 처리
+      return false;
+    }
   }
 }

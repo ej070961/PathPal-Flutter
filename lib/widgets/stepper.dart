@@ -90,13 +90,3 @@ class _CustomStepperState extends State<CustomStepper> {
   }
 }
 
-class StepperState extends ChangeNotifier {
-  int _currentStep = 0;
-
-  int get currentStep => _currentStep;
-
-  void incrementStep() {
-    _currentStep++;
-    notifyListeners();
-  }
-}

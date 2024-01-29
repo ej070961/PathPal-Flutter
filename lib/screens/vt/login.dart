@@ -87,10 +87,10 @@ class VtLogin extends StatelessWidget {
                               if (await userService
                                       .checkVtUser(userCredential.user!.uid) ==
                                   true) {
-                                Navigator.push(
+                                Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => CarMain()));
+                                        builder: (context) => CarMain(vtUid: userCredential.user!.uid,)));
                               } else {
                                 Navigator.push(
                                     context,
