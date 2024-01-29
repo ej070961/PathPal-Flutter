@@ -18,6 +18,7 @@ import '../../utils/format_time.dart';
 import '../../widgets/build_image.dart';
 
 class CarDetail extends StatefulWidget {
+  final String vtUid;
   final LatLng? center;
   final Set<Marker> markers;
   final Function? onMapCreated;
@@ -27,6 +28,7 @@ class CarDetail extends StatefulWidget {
 
   CarDetail({
     Key? key,
+    required this.vtUid,
     this.center,
     required this.markers,
     this.onMapCreated,
@@ -80,9 +82,9 @@ class _CarDetailState extends State<CarDetail> {
                   FirebaseFirestore.instance
                       .collection('cars')
                       .doc(widget.carSnapshot.id)
-                      .update({'volunteer_time': selectedDate})
+                      .update({'volunteer_time': selectedDate, 'vt_uid': widget.vtUid})
                       .then((_) => Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => VtProgress(arriveTime: FormatTime.formatTime(selectedDate) + " 도착 예정",)))
+                      builder: (context) => VtProgress(carId: widget.carSnapshot.id,arriveTime: FormatTime.formatTime(selectedDate) + " 도착 예정",)))
                       .catchError((error) => print('Update failed: $error')));
                 },
               );

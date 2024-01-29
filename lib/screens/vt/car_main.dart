@@ -15,7 +15,8 @@ import '../../widgets/google_map.dart';
 import '../../widgets/item_info_list.dart';
 
 class CarMain extends StatefulWidget {
-  const CarMain({Key? key}) : super(key: key);
+  final String vtUid;
+  const CarMain({Key? key, required this.vtUid}) : super(key: key);
 
   @override
   State<CarMain> createState() => _CarMainState();
@@ -189,6 +190,7 @@ class _CarMainState extends State<CarMain> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => CarDetail(
+                                    vtUid: widget.vtUid ?? '',
                                         markers: _markers,
                                         center: _center,
                                         onMapCreated: (controller) {
