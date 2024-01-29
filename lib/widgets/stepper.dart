@@ -1,15 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:pathpal/colors.dart';
 import 'package:pathpal/theme.dart';
+import 'package:provider/provider.dart';
 
-class CustomStepper extends StatelessWidget {
+class CustomStepper extends StatefulWidget {
   final List<String> steps;
-  final int currentStep;
+  late final int currentStep;
 
   CustomStepper({
     required this.steps,
     this.currentStep = 0,
   });
+
+  @override
+  State<CustomStepper> createState() => _CustomStepperState();
+}
+
+class _CustomStepperState extends State<CustomStepper> {
+  void incrementStep() {
+    setState(() {
+      widget.currentStep++;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,16 +30,18 @@ class CustomStepper extends StatelessWidget {
         return Container(
           color: Colors.white,
           child: Container(
-            margin: EdgeInsets.only(left:50.0),
+            margin: EdgeInsets.only(left: 50.0),
             height: 120,
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: steps.asMap().entries.map((entry) {
+                children: widget.steps.asMap().entries.map((entry) {
                   int idx = entry.key;
                   String step = entry.value;
 
-                  Color color = idx <= currentStep ? appColorScheme().onPrimary : Colors.grey;
+                  Color color = idx <= widget.currentStep
+                      ? appColorScheme().onPrimary
+                      : Colors.grey;
 
                   return Column(
                     children: [
@@ -40,9 +54,11 @@ class CustomStepper extends StatelessWidget {
                                 radius: 5,
                                 backgroundColor: color,
                               ),
-                              if (idx != steps.length - 1)
+                              if (idx != widget.steps.length - 1)
                                 Container(
-                                  height: constraints.maxHeight * 0.4 / (steps.length - 1),
+                                  height: constraints.maxHeight *
+                                      0.4 /
+                                      (widget.steps.length - 1),
                                   width: 1,
                                   color: color,
                                 ),
@@ -54,7 +70,10 @@ class CustomStepper extends StatelessWidget {
                             child: Baseline(
                               baseline: 0,
                               baselineType: TextBaseline.alphabetic,
-                              child: Text(step, style: TextStyle(color: color),),
+                              child: Text(
+                                step,
+                                style: TextStyle(color: color),
+                              ),
                             ),
                           ),
                         ],
@@ -68,5 +87,16 @@ class CustomStepper extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class StepperState extends ChangeNotifier {
+  int _currentStep = 0;
+
+  int get currentStep => _currentStep;
+
+  void incrementStep() {
+    _currentStep++;
+    notifyListeners();
   }
 }

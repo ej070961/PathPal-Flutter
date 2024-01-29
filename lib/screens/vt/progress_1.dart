@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pathpal/screens/vt/progress_2.dart';
 import 'package:pathpal/theme.dart';
 import 'package:pathpal/utils/app_images.dart';
 import 'package:pathpal/widgets/build_image.dart';
@@ -6,6 +7,7 @@ import 'package:pathpal/widgets/dp_info.dart';
 import 'package:pathpal/widgets/next_button.dart';
 import 'package:pathpal/widgets/progress_app_bar.dart';
 import 'package:pathpal/widgets/stepper.dart';
+import 'package:provider/provider.dart';
 
 import '../../colors.dart';
 
@@ -19,10 +21,12 @@ class VtProgress extends StatefulWidget {
 }
 
 class _VtProgressState extends State<VtProgress> {
-  int _currentStep = 0;
-
   @override
   Widget build(BuildContext context) {
+    final stepper = CustomStepper(
+      steps: ['가는중', '탑승 완료'],
+      currentStep: 0,
+    );
     return Scaffold(
       appBar: ProgressAppBar(),
       body: Builder(
@@ -33,13 +37,7 @@ class _VtProgressState extends State<VtProgress> {
 
           return Column(
             children: [
-              Container(
-                height: stepperHeight,
-                child: CustomStepper(
-                  steps: ['가는중', '탑승 완료'],
-                  currentStep: _currentStep,
-                ),
-              ),
+              Container(height: stepperHeight, child: stepper),
               Expanded(
                   child: Column(
                 children: [
@@ -53,9 +51,10 @@ class _VtProgressState extends State<VtProgress> {
                         print("취소");
                       },
                       child: Row(
-    mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          BuildImage.buildImage(AppImages.cancelIconImagePath, width: 13),
+                          BuildImage.buildImage(AppImages.cancelIconImagePath,
+                              width: 13),
                           Text(
                             "봉사 취소하기",
                             style: appTextTheme()
@@ -65,12 +64,17 @@ class _VtProgressState extends State<VtProgress> {
                         ],
                       ),
                       style: ButtonStyle(
-                        overlayColor: MaterialStateProperty.all(Colors.transparent), // 클릭 시 색상 변경 없애기
-                        backgroundColor: MaterialStateProperty.all(Colors.white),
-                        elevation: MaterialStateProperty.all(0), // 그림자 없애기
+                        overlayColor:
+                            MaterialStateProperty.all(Colors.transparent),
+                        // 클릭 시 색상 변경 없애기
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.white),
+                        elevation: MaterialStateProperty.all(0),
+                        // 그림자 없애기
                         shape: MaterialStateProperty.all(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.zero, // 테두리 둥글게 만드는 효과 없애기
+                            borderRadius:
+                                BorderRadius.zero, // 테두리 둥글게 만드는 효과 없애기
                           ),
                         ),
                       ),
@@ -83,11 +87,12 @@ class _VtProgressState extends State<VtProgress> {
                     width: double.infinity,
                     height: 40,
                     child: Container(
-                        margin: EdgeInsets.fromLTRB(30.0, 8.0, 0, 0),
-                        child: Text(
-                          '${widget.arriveTime}',
-                          style: appTextTheme().bodyLarge,
-                        ),),
+                      margin: EdgeInsets.fromLTRB(30.0, 8.0, 0, 0),
+                      child: Text(
+                        '${widget.arriveTime}',
+                        style: appTextTheme().bodyLarge,
+                      ),
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border(
@@ -107,9 +112,8 @@ class _VtProgressState extends State<VtProgress> {
                 title: "탑승 완료",
                 onPressed: () {
                   setState(() {
-                    if (_currentStep < 3) {
-                      _currentStep++;
-                    }
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => VtProgress2()));
                   });
                 },
               ),
