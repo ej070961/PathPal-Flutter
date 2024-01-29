@@ -3,6 +3,7 @@ import 'package:pathpal/screens/vt/progress_2.dart';
 import 'package:pathpal/theme.dart';
 import 'package:pathpal/utils/app_images.dart';
 import 'package:pathpal/widgets/build_image.dart';
+import 'package:pathpal/widgets/cancel_button.dart';
 import 'package:pathpal/widgets/dp_info.dart';
 import 'package:pathpal/widgets/next_button.dart';
 import 'package:pathpal/widgets/progress_app_bar.dart';
@@ -44,42 +45,9 @@ class _VtProgressState extends State<VtProgress> {
                   SizedBox(
                     height: 30,
                   ),
-                  Container(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        print("취소");
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          BuildImage.buildImage(AppImages.cancelIconImagePath,
-                              width: 13),
-                          Text(
-                            "봉사 취소하기",
-                            style: appTextTheme()
-                                ?.bodyMedium
-                                ?.copyWith(color: Colors.red), // 텍스트 색상 빨강으로 변경
-                          ),
-                        ],
-                      ),
-                      style: ButtonStyle(
-                        overlayColor:
-                            MaterialStateProperty.all(Colors.transparent),
-                        // 클릭 시 색상 변경 없애기
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.white),
-                        elevation: MaterialStateProperty.all(0),
-                        // 그림자 없애기
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.zero, // 테두리 둥글게 만드는 효과 없애기
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  CancelButton(title: "봉사 취소하기", onPressed: (){
+                    print('봉사 취소하기');
+                  }),
                   SizedBox(
                     height: 30,
                   ),
