@@ -7,13 +7,13 @@ class MyGoogleMap  extends StatelessWidget{
   final Function? onMapCreated;
   final Function? currentLocationFunction;
 
-  MyGoogleMap({ 
-    super.key, 
+  MyGoogleMap({
+    Key? key, 
     this.center,
     required this.markers,
     this.onMapCreated,
     this.currentLocationFunction,
-  });
+  }) : super(key: key); 
 
   @override
   Widget build(BuildContext context) {

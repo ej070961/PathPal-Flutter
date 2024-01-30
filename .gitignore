@@ -7,6 +7,7 @@
 *.ipr
 *.iws
 
+.env
 # Visual Studio Code 설정 파일
 .vscode/
 
