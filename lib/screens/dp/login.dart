@@ -100,7 +100,9 @@ class DpLoginState extends State<DpLogin> {
 
                               if (userCredential != null && userCredential.user?.uid != null) {
                                 // 사용자가 새로운 사용자인 경우 회원가입 화면으로 이동
-                                if ( await userService.checkDpUser(userCredential.user!.uid) == false) {
+                                bool response = await userService.checkDpUser(userCredential.user!.uid);
+                                print(response);
+                                if ( response == false) {
                                   // Dp 객체 생성 후 회원가입 화면으로 이동합니다.
                                   if(context.mounted){
                                     Navigator.push(

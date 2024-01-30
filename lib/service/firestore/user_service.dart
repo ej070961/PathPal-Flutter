@@ -6,6 +6,7 @@ import '../../models/volunteer.dart';
 class UserService {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
+
   void saveVolunteer(Volunteer volunteer) {
     firestore.collection('volunteers').doc(volunteer.uid).set({
       'uid': volunteer.uid,

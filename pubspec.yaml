@@ -41,6 +41,7 @@ dependencies:
   intl: ^0.19.0
   geocoding: ^2.1.1
   customizable_datetime_picker: ^0.0.3
+  flutter_dotenv: ^5.1.0
   easy_stepper: ^0.8.3
   provider: ^6.1.1
   adaptive_dialog: ^2.0.0
@@ -88,7 +89,7 @@ flutter:
     - assets/images/car-image.png
     - assets/images/walk-image.png
     - assets/images/left-arrow-icon.png
-    - assets/images/cancel-icon.png
+    - .env
   fonts:
     - family: login
       fonts:
