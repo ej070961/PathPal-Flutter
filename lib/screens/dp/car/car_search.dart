@@ -4,20 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pathpal/colors.dart';
 import 'package:pathpal/models/place.dart';
-import 'package:pathpal/screens/dp/car/select_place.dart';
+import 'package:pathpal/screens/dp/select_place.dart';
 import 'package:pathpal/service/map_service.dart';
 import 'package:pathpal/models/car_state.dart';
 
 class Search extends StatefulWidget {
-  // final Function(String, LatLng)? updateDeparture;
-  // final Function(String, LatLng)? updateDestination;
-  // final String? departureAddress;
-  // final String? destinationAddress;
-
-  // const Search({Key? key, this.updateDeparture,
-  //     this.updateDestination, this.departureAddress, this.destinationAddress})
-  //     : super(key: key);
-
   const Search({super.key});
 
   @override
@@ -90,7 +81,7 @@ class _SearchState extends State<Search> {
           context,
           MaterialPageRoute(
             builder: (context) => Container(
-                child: SelectPlace(item: place, label: '출발지')
+                child: SelectPlace(item: place, label: '출발지', category: 'car')
           )
           )
       );
@@ -100,7 +91,7 @@ class _SearchState extends State<Search> {
         context,
         MaterialPageRoute(
           builder: (context) => Container(
-              child: SelectPlace(item: place, label: '목적지')
+              child: SelectPlace(item: place, label: '목적지', category: 'car',)
           )
         )
       );

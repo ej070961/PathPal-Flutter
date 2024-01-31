@@ -98,6 +98,7 @@ class _CarPage extends State<CarPage> {
     firebaseService.saveCarServiceData(car)
     .then((isSuccess) {
       if (isSuccess) {
+        CarServiceState().resetState();
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -144,7 +145,7 @@ class _CarPage extends State<CarPage> {
               SizedBox(
                 height: constraints.maxHeight * 0.39,
                 child: Column(children: [
-                  DepartureTimeWidget(),
+                  DepartureTimeWidget(departureTime: CarServiceState().departureTime!),
                   Expanded(
                     child: Padding(
                       padding: EdgeInsets.all(20),

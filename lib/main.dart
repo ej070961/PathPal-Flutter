@@ -3,6 +3,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:pathpal/screens/dp/car/car_page.dart';
 import 'package:pathpal/screens/dp/login.dart';
+import 'package:pathpal/screens/dp/walk/walk_page.dart';
 import 'package:pathpal/screens/vt/car_main.dart';
 import 'package:pathpal/screens/vt/login.dart';
 import 'package:pathpal/screens/vt/progress_1.dart';
@@ -40,7 +41,11 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
          home: DpLogin(),
-          routes: {'/CarPage': (context) => CarPage()}  //Disabled persion 로그인 화면
+        routes: {
+          '/CarPage': (context) => CarPage(),
+          '/WalkPage': (context)=> WalkPage()
+          
+          }  //Disabled persion 로그인 화면
         );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pathpal/colors.dart';
 import 'package:pathpal/models/place.dart';
+import 'package:pathpal/models/walk_state.dart';
 import 'package:pathpal/widgets/departure_time.dart';
 import 'package:pathpal/widgets/google_map.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -13,12 +14,14 @@ class SelectPlace extends StatefulWidget {
 
   final Place item;
   final String label;
+  final String category;
 
   const SelectPlace(
       {this.updateDeparture,
       this.updateDestination,
       required this.item,
       required this.label,
+      required this.category,
       Key? key})
       : super(key: key);
 
@@ -58,16 +61,26 @@ class _SelectPlaceState extends State<SelectPlace> {
 
     if (widget.label == '출발지') {
       // widget.updateDeparture?.call(address, latLng);
-      CarServiceState().departureLatLng = latLng;
-      CarServiceState().departureAddress = address;
-      Navigator.pop(context);
+      if(widget.category == 'car'){
+        CarServiceState().departureLatLng = latLng;
+        CarServiceState().departureAddress = address;
+        Navigator.pop(context);
+      }else{
+        WalkServiceState().departureLatLng = latLng;
+        WalkServiceState().departureAddress = address;
+        Navigator.pop(context);
+        Navigator.pop(context);
+        // Navigator.pushNamed(
+        //     context, '/WalkPage');
+      }
 
     } else if (widget.label == '목적지') {
       CarServiceState().destinationLatLng = latLng;
       CarServiceState().destinationAddress = address;
-      // Navigator.pushNamed(context, '/CarService');
-      Navigator.pushNamedAndRemoveUntil(
-          context, '/CarPage', (route) => false);
+      Navigator.pop(context);
+      Navigator.pop(context);
+      // Navigator.pushNamedAndRemoveUntil(
+      //     context, '/CarPage', (route) => false);
     }
   }
 
@@ -106,7 +119,7 @@ class _SelectPlaceState extends State<SelectPlace> {
         height: MediaQuery.of(context).size.height * 0.3,
         child: Column(
           children: [
-            DepartureTimeWidget(),
+            DepartureTimeWidget(departureTime: widget.category=='car'? CarServiceState().departureTime!: WalkServiceState().departureTime! ),
             Expanded(
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center, // 세로 방향 중앙 정렬

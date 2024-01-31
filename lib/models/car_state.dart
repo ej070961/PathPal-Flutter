@@ -15,4 +15,13 @@ class CarServiceState {
   LatLng? destinationLatLng;
   DateTime? departureTime; 
 
+  void resetState() {
+    departureAddress = null;
+    departureLatLng = null;
+    departureTime = null;
+    destinationAddress = null;
+    destinationLatLng = null;
+    // 나머지 필드도 초기화
+  }
+
 }
