@@ -52,7 +52,7 @@ class DpInfo extends StatelessWidget {
               ItemInfoList(
                 imagePath: AppImages.circleIconImagePath,
                 label: '출발지',
-                data: DpData.location.toString(),
+                data: DpData.departureAddress.toString(),
               ),
               SizedBox(
                 height: 5,
@@ -60,7 +60,7 @@ class DpInfo extends StatelessWidget {
               ItemInfoList(
                 imagePath: AppImages.redCircleIconImagePath,
                 label: '도착지',
-                data: DpData.location.toString(),
+                data: DpData.destinationAddress.toString(),
               ),
               SizedBox(
                 height: 5,

@@ -7,6 +7,8 @@ class DpData {
   static bool wcUse = false;
   static String? wcUseText;
   static GeoPoint? location;
+  static String? departureAddress;
+  static String? destinationAddress;
   static DateTime time = DateTime.now();
 
   static void setData(dynamic dpSnapshot, dynamic carSnapshot) {
@@ -15,7 +17,9 @@ class DpData {
     disabilityType = dpSnapshot.data?.get('disabilityType');
     wcUse = dpSnapshot.data?.get('wcUse') == "Yes";
     wcUseText = wcUse ? "휠체어o" : "휠체어x";
-    location = carSnapshot['departure_address'];
+    location = carSnapshot['departure_latlng'];
+    departureAddress = carSnapshot['departure_address'];
+    destinationAddress = carSnapshot['destination_address'];
     time = carSnapshot['departure_time'].toDate();
   }
 }
