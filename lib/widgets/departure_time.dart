@@ -3,14 +3,16 @@ import 'package:pathpal/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:pathpal/widgets/modal_bottom_sheet.dart';
+import 'package:pathpal/models/car_state.dart';
 
 class DepartureTimeWidget extends StatefulWidget {
   late DateTime departureTime;
 
   DepartureTimeWidget(
-    {required this.departureTime, 
+    {required this.departureTime,
     Key? key
     }) : super(key: key);
+  // DepartureTimeWidget({super.key});
 
   @override
   _DepartureTimeWidgetState createState() => _DepartureTimeWidgetState();
@@ -19,19 +21,18 @@ class DepartureTimeWidget extends StatefulWidget {
 class _DepartureTimeWidgetState extends State<DepartureTimeWidget> {
   late String formattedDateTime;
 
-
   @override
   void initState() {
     super.initState();
     initializeDateFormatting('ko_KR', null).then((_) {
-     updateFormattedDateTime();
+      updateFormattedDateTime();
     });
   }
 
   void updateFormattedDateTime() {
     setState(() {
-      formattedDateTime =
-          DateFormat('M/d (E) HH:mm', 'ko_KR').format(widget.departureTime);
+      formattedDateTime = DateFormat('M/d (E) HH:mm', 'ko_KR')
+          .format(widget.departureTime);
     });
   }
 
@@ -69,14 +70,15 @@ class _DepartureTimeWidgetState extends State<DepartureTimeWidget> {
             ],
           ),
           GestureDetector(
-            child: Text(
-              "변경",
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: mainAccentColor,
-              ) ?? TextStyle(),           
-            ),
-            onTap: () {
-             ModalBottomSheet.show(
+              child: Text(
+                "변경",
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: mainAccentColor,
+                        ) ??
+                    TextStyle(),
+              ),
+              onTap: () {
+                ModalBottomSheet.show(
                   context,
                   timeTitle: '출발시각',
                   nextButtonTitle: '선택완료',
@@ -90,10 +92,9 @@ class _DepartureTimeWidgetState extends State<DepartureTimeWidget> {
                     print('변경 후 departureTime: ${widget.departureTime}');
                     // Update the formattedDateTime or any other necessary updates
                     updateFormattedDateTime();
-                    },
+                  },
                 );
-            }
-          ),
+              }),
         ],
       ),
     );
