@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pathpal/colors.dart';
 import 'package:pathpal/screens/dp/login.dart';
 import 'package:pathpal/screens/vt/signup_1.dart';
+import 'package:pathpal/widgets/navbar_vt.dart';
 
 import '../../service/auth_service.dart';
 import '../../service/firestore/user_service.dart';
@@ -90,7 +91,7 @@ class VtLogin extends StatelessWidget {
                                 Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => CarMain(vtUid: userCredential.user!.uid,)));
+                                        builder: (context) => VtNavBar(vtUid: userCredential.user!.uid,)));
                               } else {
                                 Navigator.push(
                                     context,

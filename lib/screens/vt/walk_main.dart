@@ -5,14 +5,14 @@ import 'package:pathpal/widgets/google_map.dart';
 
 import '../../service/map_service.dart';
 
-class WalkingMain extends StatefulWidget {
-  const WalkingMain({super.key});
+class WalkMain extends StatefulWidget {
+  const WalkMain({super.key});
 
   @override
-  State<WalkingMain> createState() => _WalkingMainState();
+  State<WalkMain> createState() => _WalkMainState();
 }
 
-class _WalkingMainState extends State<WalkingMain> {
+class _WalkMainState extends State<WalkMain> {
   late GoogleMapController mapController;
   final MapService mapService = MapService();
   final Set<Marker> _markers = {};
