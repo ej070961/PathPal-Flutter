@@ -68,7 +68,7 @@ class _ModalBottomSheetState extends State<ModalBottomSheet> {
     DateTime initialDateTime = FormatTime.formatCheckMinute(selectedDate);
 
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.3,
+      height: MediaQuery.of(context).size.height * 0.39,
       child: Column(
         children: <Widget>[
           SizedBox(

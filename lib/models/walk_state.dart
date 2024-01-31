@@ -12,4 +12,13 @@ class WalkServiceState {
   String? departureAddress;
   LatLng? departureLatLng;
   DateTime? departureTime;
+  String? content;
+
+  void resetState() {
+    departureAddress = null;
+    departureLatLng = null;
+    departureTime = null;
+    content = null;
+  // 나머지 필드도 초기화
+  }
 }

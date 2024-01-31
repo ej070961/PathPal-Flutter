@@ -6,13 +6,13 @@ import 'package:pathpal/widgets/modal_bottom_sheet.dart';
 import 'package:pathpal/models/car_state.dart';
 
 class DepartureTimeWidget extends StatefulWidget {
-  // late DateTime departureTime;
+  late DateTime departureTime;
 
-  // DepartureTimeWidget(
-  //   {required this.departureTime,
-  //   Key? key
-  //   }) : super(key: key);
-  DepartureTimeWidget({super.key});
+  DepartureTimeWidget(
+    {required this.departureTime,
+    Key? key
+    }) : super(key: key);
+  // DepartureTimeWidget({super.key});
 
   @override
   _DepartureTimeWidgetState createState() => _DepartureTimeWidgetState();
@@ -32,7 +32,7 @@ class _DepartureTimeWidgetState extends State<DepartureTimeWidget> {
   void updateFormattedDateTime() {
     setState(() {
       formattedDateTime = DateFormat('M/d (E) HH:mm', 'ko_KR')
-          .format(CarServiceState().departureTime!);
+          .format(widget.departureTime);
     });
   }
 
@@ -82,14 +82,14 @@ class _DepartureTimeWidgetState extends State<DepartureTimeWidget> {
                   context,
                   timeTitle: '출발시각',
                   nextButtonTitle: '선택완료',
-                  initialDateTime: CarServiceState().departureTime,
+                  initialDateTime: widget.departureTime,
                   onPressed: (DateTime selectedDate) {
-                    print('변경 전 departureTime: ${CarServiceState().departureTime}');
+                    print('변경 전 departureTime: ${widget.departureTime}');
                     setState(() {
                       print('변경');
-                      CarServiceState().departureTime = selectedDate;
+                      widget.departureTime = selectedDate;
                     });
-                    print('변경 후 departureTime: ${CarServiceState().departureTime}');
+                    print('변경 후 departureTime: ${widget.departureTime}');
                     // Update the formattedDateTime or any other necessary updates
                     updateFormattedDateTime();
                   },

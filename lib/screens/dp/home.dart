@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pathpal/colors.dart';
 import 'package:pathpal/screens/dp/car/car_page.dart';
-import 'package:pathpal/screens/dp/walk_service.dart';
+import 'package:pathpal/screens/dp/walk/walk_page.dart';
+
 import '../../widgets/appBar.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -79,7 +80,7 @@ class  HomePageState extends State <HomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => WalkService()),
+                        builder: (context) => WalkPage()),
                   );
 
               },
