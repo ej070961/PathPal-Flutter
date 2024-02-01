@@ -5,21 +5,21 @@ import 'package:fluttertoast/fluttertoast.dart';
 class CarService{
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  Future<bool> saveCarServiceData(CarModel cm) async {
-    try {
-      await firestore.collection('cars')
-        .doc()
-        .set({
+  Future<String?> saveCarServiceData(CarModel cm) async {
+   try {
+      DocumentReference docRef = await firestore.collection('cars').add({
         'departure_address': cm.departureAddress,
-        'departure_latlng': GeoPoint(cm.departureLatLng!.latitude, cm.departureLatLng!.longitude),
+        'departure_latlng': GeoPoint(
+            cm.departureLatLng!.latitude, cm.departureLatLng!.longitude),
         'departure_time': cm.departureTime,
-        'destination_address': cm.departureAddress,
-        'destination_latlng': GeoPoint(cm.destinationLatLng!.latitude, cm.destinationLatLng!.longitude),
+        'destination_address': cm.destinationAddress,
+        'destination_latlng': GeoPoint(
+            cm.destinationLatLng!.latitude, cm.destinationLatLng!.longitude),
         'status': cm.status,
         'dp_uid': cm.dpUid
       });
       print('Successfully saved');
-      return true; // 정보 저장 성공
+      return docRef.id; // 저장된 문서의 ID를 반환
     } catch (error) {
       print(error.toString());
       Fluttertoast.showToast(
@@ -27,7 +27,7 @@ class CarService{
         gravity: ToastGravity.BOTTOM,
         toastLength: Toast.LENGTH_SHORT,
       );
-      return false; // 정보 저장 실패
+      return null; // 오류 발생 시 null 반환
     }
   }
 }
