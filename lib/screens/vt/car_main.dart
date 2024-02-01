@@ -52,7 +52,7 @@ class _CarMainState extends State<CarMain> {
     ];
     _center = const LatLng(37.6300, 127.0764);
     _isImageVisibleList =
-        List<bool>.filled(items.length, false); // 모든 아이템에 대해 false로 초기화
+        List<bool>.filled(10, false); // 모든 아이템에 대해 false로 초기화
   }
 
   @override
@@ -120,15 +120,16 @@ class _CarMainState extends State<CarMain> {
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            // 데이터가 로드되지 않았을 때의 처리를 해줍니다.
             return CircularProgressIndicator();
           }
           var doc = snapshot.data!;
-          GeoPoint location = car['departure_address'];
-          DateTime date = car['departure_time'].toDate();
+          GeoPoint latlng = car['departure_latlng'];
+          String departureAddress = car['departure_address'];
+          String destinationAddress = car['destination_address'];
+          DateTime date = car['departure_time'].toDate() ?? DateTime(2024, 1, 31);
           String dateString = date.toString();
           Future<String?> address =
-              getAddressFromLatLng(location.latitude, location.longitude);
+              getAddressFromLatLng(latlng.latitude, latlng.longitude);
 
           return Container(
             height: 70,
@@ -157,7 +158,7 @@ class _CarMainState extends State<CarMain> {
                         ItemInfoList(
                           imagePath: AppImages.circleIconImagePath,
                           label: '출발지',
-                          data: location.toString(),
+                          data: departureAddress,
                         ),
                         SizedBox(
                           height: 5,
@@ -165,7 +166,7 @@ class _CarMainState extends State<CarMain> {
                         ItemInfoList(
                           imagePath: AppImages.redCircleIconImagePath,
                           label: '도착지',
-                          data: location.toString(),
+                          data: destinationAddress,
                         ),
                         SizedBox(
                           height: 5,

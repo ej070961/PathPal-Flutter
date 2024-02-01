@@ -7,6 +7,7 @@ import 'package:pathpal/screens/dp/walk/walk_page.dart';
 import 'package:pathpal/screens/vt/car_main.dart';
 import 'package:pathpal/screens/vt/login.dart';
 import 'package:pathpal/screens/vt/progress_1.dart';
+import 'package:pathpal/screens/vt/walking_main.dart';
 import 'package:pathpal/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
