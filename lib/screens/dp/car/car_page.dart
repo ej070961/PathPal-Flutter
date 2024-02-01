@@ -93,16 +93,16 @@ class _CarPage extends State<CarPage> {
         destinationAddress: destinationAddress,
         destinationLatLng: destinationLatLng,
         dpUid: dpUid,
-        status: "boarding");
+        status: "waiting");
 
     firebaseService.saveCarServiceData(car)
-    .then((isSuccess) {
-      if (isSuccess) {
+    .then((docId) {
+      if (docId != null) {
         CarServiceState().resetState();
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => Container(child: CarProgress()),
+              builder: (context) => Container(child: CarProgress(docId: docId)),
             ));
       } else {
         // 회원 정보 저장 실패 시 로그인 창으로 이동

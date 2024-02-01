@@ -3,6 +3,8 @@ import 'package:pathpal/colors.dart';
 import 'package:pathpal/theme.dart';
 
 class ProgressAppBar extends StatelessWidget implements PreferredSizeWidget{
+  const ProgressAppBar({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -15,6 +17,7 @@ class ProgressAppBar extends StatelessWidget implements PreferredSizeWidget{
         ),
       ),
       child: AppBar(
+        automaticallyImplyLeading: false,
         centerTitle: true,
         title: Text(
           "진행상태",
