@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pathpal/colors.dart';
 import 'package:pathpal/models/car_model.dart';
-import 'package:pathpal/screens/dp/car/car_progress.dart';
+import 'package:pathpal/screens/dp/progress.dart';
 import 'package:pathpal/screens/dp/car/car_search.dart';
 import 'package:pathpal/utils/app_images.dart';
 import 'package:pathpal/widgets/build_image.dart';
@@ -109,10 +110,15 @@ class _CarPage extends State<CarPage> {
     .then((docId) {
       if (docId != null) {
         CarServiceState().resetState();
+        Fluttertoast.showToast(
+          msg: '접수가 완료되었어요!',
+          gravity: ToastGravity.BOTTOM,
+          toastLength: Toast.LENGTH_SHORT,
+        );
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => Container(child: CarProgress(docId: docId)),
+              builder: (context) => Container(child: Progress(docId: docId, category: 'car')),
             ));
       } else {
         // 회원 정보 저장 실패 시 로그인 창으로 이동

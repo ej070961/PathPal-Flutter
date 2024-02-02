@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pathpal/colors.dart';
 import 'package:pathpal/models/car_model.dart';
 import 'package:pathpal/models/walk_model.dart';
-import 'package:pathpal/screens/dp/car/car_progress.dart';
+import 'package:pathpal/screens/dp/progress.dart';
 import 'package:pathpal/screens/dp/car/car_search.dart';
 import 'package:pathpal/screens/dp/walk/request_form.dart';
-import 'package:pathpal/screens/dp/walk/walk_progress.dart';
+import 'package:pathpal/screens/dp/progress.dart';
 import 'package:pathpal/screens/dp/walk/walk_search.dart';
 import 'package:pathpal/utils/app_images.dart';
 import 'package:pathpal/widgets/build_image.dart';
@@ -17,6 +18,7 @@ import 'package:pathpal/widgets/next_button.dart';
 import 'package:pathpal/models/walk_state.dart';
 import 'package:pathpal/service/firestore/walk_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:geocoding/geocoding.dart';
 
 class WalkPage extends StatefulWidget {
   const WalkPage({super.key});
@@ -50,11 +52,20 @@ class _WalkPageState extends State<WalkPage> {
   }
 
   void _getcurrentLocation() async {
-    final currentLocation = await mapService.getCurrentLocation();
+    final currentLatLng = await mapService.getCurrentLocation();
+    // 역지오코딩을 통해 현재 위치의 주소를 가져옵니다.
+    final placemarks = await placemarkFromCoordinates(
+        currentLatLng.latitude, currentLatLng.longitude);
 
-    setState(() {
-      WalkServiceState().departureLatLng = currentLocation;
+    if (placemarks.isNotEmpty) {
+      final placemark = placemarks.first;
+      final address = '${placemark.street}';
+      WalkServiceState().departureAddress = address; // 현재 위치의 주소를 반환
+    } else {
       WalkServiceState().departureAddress = '현 위치';
+    }
+    setState(() {
+      WalkServiceState().departureLatLng = currentLatLng;
     });
   }
 
@@ -82,28 +93,33 @@ class _WalkPageState extends State<WalkPage> {
         ));
   }
 
-  final firebaseService = CarService();
+  final firebaseService = WalkService();
 
   void _submitForm() async {
     print("submitForm");
     // Firebase에서 현재 사용자의 uid 가져오기
     final dpUid = FirebaseAuth.instance.currentUser!.uid;
     WalkModel walk = WalkModel(
-        departureAddress: departureAddress,
-        departureLatLng: departureLatLng,
+        departureAddress: WalkServiceState().departureAddress,
+        departureLatLng: WalkServiceState().departureLatLng,
         departureTime: WalkServiceState().departureTime,
         content: WalkServiceState().content,
         dpUid: dpUid,
-        status: "boarding");
+        status: "waiting");
 
     firebaseService.saveWalkServiceData(walk)
-    .then((isSuccess) {
-      if (isSuccess) {
+    .then((docId) {
+      if (docId != null) {
         WalkServiceState().resetState(); 
+        Fluttertoast.showToast(
+          msg: '접수가 완료되었어요!',
+          gravity: ToastGravity.BOTTOM,
+          toastLength: Toast.LENGTH_SHORT,
+        );
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => Container(child: WalkProgress()),
+              builder: (context) => Container(child: Progress(docId: docId, category: 'walk',)),
             ));
       } else {
         // 회원 정보 저장 실패 시 로그인 창으로 이동
@@ -123,6 +139,7 @@ class _WalkPageState extends State<WalkPage> {
           leading: IconButton(
               onPressed: () {
                 Navigator.pop(context);
+                WalkServiceState().resetState();
               },
               icon: Icon(Icons.arrow_back)),
           centerTitle: true,
@@ -146,13 +163,13 @@ class _WalkPageState extends State<WalkPage> {
                   ),
                 ),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.39,
+                  height: constraints.maxHeight * 0.4,
                   child: Column(
                     children: [
                       DepartureTimeWidget(departureTime: WalkServiceState().departureTime!),
                       Expanded(
                         child: Padding(
-                          padding: EdgeInsets.all(20),
+                          padding: EdgeInsets.all(15),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -160,7 +177,6 @@ class _WalkPageState extends State<WalkPage> {
                                 width: 53,
                                 height: 24,
                                 decoration: BoxDecoration(
-                                
                                   color: background,
                                   borderRadius: BorderRadius.circular(10)),
                                   child:Align(
@@ -171,7 +187,7 @@ class _WalkPageState extends State<WalkPage> {
                                     ),
                                   ),
                               ),
-                            SizedBox(height: 10),
+                            SizedBox(height: 7),
                             GestureDetector(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -179,17 +195,22 @@ class _WalkPageState extends State<WalkPage> {
                                   Image.asset('assets/images/circle-icon.png'),
                                   SizedBox(width: 10),
                                   Flexible(
-                                      child:
-                                          Text('${WalkServiceState().departureAddress}'))
+                                    child:
+                                        Text(
+                                          WalkServiceState().departureAddress ?? '',
+                                          overflow: TextOverflow.ellipsis,
+                                        )
+                                      )
                                 ],
                               ),
                             onTap: () {
                                 _goToSearch();
                               },
                             ),
-                            SizedBox(height: 7),
+                            SizedBox(height: 5),
                             Divider(color: gray200),
-                            SizedBox(height: 7),
+                            SizedBox(height: 5),
+                            //도움요청사항 
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
