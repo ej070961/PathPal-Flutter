@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pathpal/models/review.dart';
 import 'package:pathpal/service/firestore/review_service.dart';
 import 'package:pathpal/widgets/build_image.dart';
@@ -54,6 +55,11 @@ class _ReviewFormState extends State<ReviewForm> {
 
     firebaseService.saveReviewData(review).then((isSuccess) {
       if (isSuccess) {
+        Fluttertoast.showToast(
+          msg: '리뷰가 성공적으로 등록되었어요!',
+          gravity: ToastGravity.BOTTOM,
+          toastLength: Toast.LENGTH_SHORT,
+        );
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -91,9 +97,13 @@ class _ReviewFormState extends State<ReviewForm> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               //프로필 이미지
-                              SizedBox(
+                             SizedBox(
                                 width: 50,
-                                child: BuildImage.buildProfileImage(vtData['profileUrl']),
+                                height: 50,
+                                child: ClipOval(
+                                  child: BuildImage.buildProfileImage(
+                                      vtData['profileUrl']),
+                                ),
                               ),
                               Text('${vtData['name']}봉사자와의 이동은 어떠셨나요?'),
                               //별점

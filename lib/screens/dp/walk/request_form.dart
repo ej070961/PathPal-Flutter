@@ -10,7 +10,7 @@ class RequestForm extends StatefulWidget {
 
 class _RequestFormState extends State<RequestForm> {
 
-  final _requestController = TextEditingController();
+  final _requestController = TextEditingController(text: WalkServiceState().content);
 
   @override
   void initState() {

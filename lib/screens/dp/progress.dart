@@ -10,15 +10,16 @@ import 'package:pathpal/widgets/review_form.dart';
 import 'package:pathpal/widgets/stepper.dart';
 import 'package:pathpal/widgets/vt_info.dart';
 
-class CarProgress extends StatefulWidget {
+class Progress extends StatefulWidget {
   final docId;
-  const CarProgress({super.key, this.docId});
+  final category;
+  const Progress({super.key, this.docId, this.category});
 
   @override
-  State<CarProgress> createState() => _CarProgressState();
+  State<Progress> createState() => _ProgressState();
 }
 
-class _CarProgressState extends State<CarProgress> {
+class _ProgressState extends State<Progress> {
 
   int _setCurrentStep(status){
      switch (status) {
@@ -32,6 +33,8 @@ class _CarProgressState extends State<CarProgress> {
         return -1;
     }
   }
+  final carSteps = ['접수완료 및 수락 대기 ', '수락완료', '탑승완료'];
+  final walkSteps = ['접수완료 및 수락 대기 ', '수락완료', '미팅완료'];
 
   void _cancelRequest(context) async{
     print("Cancel Request button pressed");
@@ -41,12 +44,12 @@ class _CarProgressState extends State<CarProgress> {
       builder: (BuildContext context) {
         return RectangleDialog(
           title: '요청 취소',
-          message: '정말로 차량서비스 요청을 취소하시겠습니까?',
+          message: '정말로 서비스 요청을 취소하시겠습니까?',
           okLabel: '확인',
           cancelLabel: '취소',
           okPressed: () {
             FirebaseFirestore.instance
-                .collection('cars')
+                .collection(widget.category=='car'? 'cars': 'walks')
                 .doc(widget.docId)
                 .delete()
                 .then((_) {
@@ -68,7 +71,7 @@ class _CarProgressState extends State<CarProgress> {
             final double screenHeight = MediaQuery.of(context).size.height;
             final double stepperHeight = (screenHeight - appBarHeight) * 0.2;
             return StreamBuilder<DocumentSnapshot>(
-              stream: FirebaseFirestore.instance.collection('cars').doc(widget.docId).snapshots(),
+              stream: FirebaseFirestore.instance.collection(widget.category=='car'?'cars': 'walks').doc(widget.docId).snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return CircularProgressIndicator(); // 데이터가 로딩 중일 때 보여줄 위젯
@@ -84,7 +87,7 @@ class _CarProgressState extends State<CarProgress> {
                     SizedBox(
                       height: stepperHeight, 
                       child: CustomStepper(
-                        steps: ['접수완료 및 수락 대기 ', '수락완료', '탑승완료'],
+                        steps: widget.category=='car'? carSteps: walkSteps,
                         currentStep: _setCurrentStep(data['status']),
                       )
                     ),
@@ -132,7 +135,7 @@ class _CarProgressState extends State<CarProgress> {
                         //status가 boarding일 때 리뷰작성 폼 표시
                         data['status'] == 'boarding'
                         ?
-                        ReviewForm(dpUid: data['dp_uid'], vtUid: data['vt_uid'], reqId: widget.docId, category: 'car')
+                        ReviewForm(dpUid: data['dp_uid'], vtUid: data['vt_uid'], reqId: widget.docId, category: widget.category)
                         : Container()
                 
                   ],
