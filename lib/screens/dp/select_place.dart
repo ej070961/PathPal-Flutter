@@ -78,9 +78,8 @@ class _SelectPlaceState extends State<SelectPlace> {
       CarServiceState().destinationLatLng = latLng;
       CarServiceState().destinationAddress = address;
       Navigator.pop(context);
-      Navigator.pop(context);
-      // Navigator.pushNamedAndRemoveUntil(
-      //     context, '/CarPage', (route) => false);
+      Navigator.pushReplacementNamed(
+          context, '/CarPage');
     }
   }
 

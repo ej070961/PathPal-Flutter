@@ -74,7 +74,11 @@ class _CarProgressState extends State<CarProgress> {
                   return CircularProgressIndicator(); // 데이터가 로딩 중일 때 보여줄 위젯
                 }
                 Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>; // 받아온 문서의 데이터
-                DateTime vtTime = data['volunteer_time'].toDate();
+
+                DateTime? vtTime;
+                if(data['status'] != 'waiting'){
+                  vtTime = data['volunteer_time'].toDate();
+                }
                 return Column(
                   children: [
                     SizedBox(
@@ -122,18 +126,14 @@ class _CarProgressState extends State<CarProgress> {
                         // status가 going일 때 봉사자 정보 표시 
                         data['status'] == 'going'
                         ? 
-                        VtInfo(vtUid: data['vt_uid'], vtTime: vtTime)
+                        VtInfo(vtUid: data['vt_uid'], vtTime: vtTime!)
                         : Container(),
 
                         //status가 boarding일 때 리뷰작성 폼 표시
                         data['status'] == 'boarding'
                         ?
                         ReviewForm(dpUid: data['dp_uid'], vtUid: data['vt_uid'], reqId: widget.docId, category: 'car')
-                        : Container(
-                          child: Text(
-                            'boarding 상태 아님 '
-                          )
-                        )
+                        : Container()
                 
                   ],
                 )),
