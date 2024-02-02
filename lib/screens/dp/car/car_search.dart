@@ -20,17 +20,16 @@ class _SearchState extends State<Search> {
   bool isDepartureSelected = false; // 출발지가 선택되었는지를 추적하는 변수
   bool isDestinationSelected = false; // 목적지가 선택되었는지를 추적하는 변수
 
-  late TextEditingController departureController;
-  late TextEditingController destinationController;
+  final  _departureController = TextEditingController(text: CarServiceState().departureAddress);
+  final _destinationController = TextEditingController(text: CarServiceState().destinationAddress);
   final MapService mapService = MapService();
-
    List<Place> searchResults = [];
 
   @override
   void initState() {
     super.initState();
-    departureController = TextEditingController(text: CarServiceState().departureAddress);
-    destinationController = TextEditingController(text: CarServiceState().destinationAddress);
+    _departureController.addListener(() { });
+    _destinationController.addListener(() { });
   }
   // Parse the JSON response and return a list of places
   List<Map<String, dynamic>> parseResponse(String responseBody) {
@@ -47,9 +46,8 @@ class _SearchState extends State<Search> {
       return [];
     }
   }
+
   void searchPlace(placeText) async {
-
-
     String responseBody = await mapService.getPlace(placeText);
     print(responseBody);
      // Parse the response and extract the relevant information
@@ -77,6 +75,9 @@ class _SearchState extends State<Search> {
   void _goToSelectPlace(place) {
     if (isDepartureSelected) {
       print("출발지 선택 화면 이동 ");
+      setState(() {
+        _departureController.text = place.formattedAddress;
+      });
       Navigator.push(
           context,
           MaterialPageRoute(
@@ -87,61 +88,87 @@ class _SearchState extends State<Search> {
       );
     }else if (isDestinationSelected){
       print("목적지 선택 화면 이동 ");
+      setState(() {
+        _destinationController.text = place.formattedAddress;
+      });
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => Container(
-              child: SelectPlace(item: place, label: '목적지', category: 'car',)
+              child: SelectPlace(item: place, label: '목적지', category: 'car')
           )
         )
       );
-
     }
   }
 
   @override
   Widget build(BuildContext context) {
-
     return  Scaffold(
        backgroundColor: Colors.white,
-        appBar: AppBar(
-          leading: IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(Icons.arrow_back)),
-          centerTitle: true,
-          title: Text(
-            '차량서비스',
-            style: Theme.of(context).textTheme.titleLarge,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(kToolbarHeight), // 기본 AppBar 높이
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: gray200,
+                  width: 0.5,
+                ),
+              ),
+            ),
+            child: AppBar(
+              leading: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(Icons.arrow_back),
+              ),
+              centerTitle: true,
+              title: Text(
+                '차량서비스',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+            ),
           ),
         ),
         body: Column(
         children: [
           SizedBox(
             child: Padding(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
               child: Column(
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      SizedBox(width: 10),
                       Image.asset('assets/images/circle-icon.png'),
                       SizedBox(width: 10),
                       Expanded(
                         // 수정: InputDecorator를 Expanded로 감싸서 폭을 제한
                         child: TextField(
-                          controller: departureController,
+                          controller: _departureController,
                           decoration: InputDecoration(hintText: '출발지'),
+                           onEditingComplete: () {
+                            FocusScope.of(context).unfocus(); // 키보드를 닫습니다.
+                            setState(() {
+                              isDepartureSelected = true;
+                              isDestinationSelected = false;
+                            });
+                            searchPlace(_departureController.text);
+                          },
                         ),
                       ),
                      IconButton(
                         onPressed: () {
+                          FocusScope.of(context).unfocus(); // 키보드를 닫습니다.
                           setState(() {
                             isDepartureSelected = true;
                             isDestinationSelected = false;
                           });
-                          searchPlace(departureController.text);
+                          searchPlace(_departureController.text);
                         },
                         icon: Icon(
                           Icons.search,
@@ -152,23 +179,36 @@ class _SearchState extends State<Search> {
                   ),
                   SizedBox(height: 5),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      SizedBox(width: 10),
                       Image.asset('assets/images/red-circle-icon.png'),
                       SizedBox(width: 10),
                       Expanded(
                         // 수정: InputDecorator를 Expanded로 감싸서 폭을 제한
                         child: TextField(
-                          controller: destinationController,
+                          controller: _destinationController,
                           decoration: InputDecoration(hintText: '목적지'),
+                          onEditingComplete: () {
+                            FocusScope.of(context).unfocus(); // 키보드를 닫습니다.
+                            setState(() {
+                              isDepartureSelected = false;
+                              isDestinationSelected = true;
+                            });
+                            searchPlace(_destinationController.text);
+                          },
+                          
                         ),
                       ),
                       IconButton(
                         onPressed: () {
+                           FocusScope.of(context).unfocus(); // 키보드를 닫습니다.
                            setState(() {
                             isDepartureSelected = false;
                             isDestinationSelected = true;
                           });
-                          searchPlace(destinationController.text);
+                          searchPlace(_destinationController.text);
                         },
                         icon: Icon(
                           Icons.search,

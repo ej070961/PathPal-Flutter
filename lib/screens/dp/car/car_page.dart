@@ -13,6 +13,7 @@ import 'package:pathpal/widgets/next_button.dart';
 import 'package:pathpal/models/car_state.dart';
 import 'package:pathpal/service/firestore/car_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:geocoding/geocoding.dart';
 
 class CarPage extends StatefulWidget {
   const CarPage({super.key});
@@ -48,11 +49,20 @@ class _CarPage extends State<CarPage> {
   }
 
   void _getcurrentLocation() async {
-    final currentLocation = await mapService.getCurrentLocation();
+    final currentLatLng= await mapService.getCurrentLocation();
+     // 역지오코딩을 통해 현재 위치의 주소를 가져옵니다.
+    final placemarks = await placemarkFromCoordinates(
+        currentLatLng.latitude, currentLatLng.longitude);
 
-    setState(() {
-      CarServiceState().departureLatLng = currentLocation;
+    if (placemarks.isNotEmpty) {
+      final placemark = placemarks.first;
+      final address ='${placemark.street}';
+      CarServiceState().departureAddress = address; // 현재 위치의 주소를 반환
+    } else {
       CarServiceState().departureAddress = '현 위치';
+    }
+    setState(() {
+      CarServiceState().departureLatLng = currentLatLng;
     });
   }
 
@@ -121,6 +131,7 @@ class _CarPage extends State<CarPage> {
           leading: IconButton(
               onPressed: () {
                 Navigator.pop(context);
+                CarServiceState().resetState();
               },
               icon: Icon(Icons.arrow_back)),
           centerTitle: true,
@@ -151,7 +162,8 @@ class _CarPage extends State<CarPage> {
                       padding: EdgeInsets.all(20),
                       child: Column(children: [
                         GestureDetector(
-                          child: Row(
+                          child: Expanded(
+                            child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Image.asset('assets/images/circle-icon.png'),
@@ -160,9 +172,13 @@ class _CarPage extends State<CarPage> {
                                 child: Text("출발지 : "),
                               ),
                               Flexible(
-                                  child:
-                                      Text('${CarServiceState().departureAddress}'))
+                                  child: Text(
+                                    CarServiceState().departureAddress ?? '',
+                                    overflow: TextOverflow.ellipsis,
+                                  )
+                              )
                             ],
+                            )
                           ),
                           onTap: () {
                             _goToSearch();
@@ -171,15 +187,19 @@ class _CarPage extends State<CarPage> {
                         SizedBox(height: 5),
                         Divider(color: gray200),
                         GestureDetector(
-                          child: Row(
+                          child: Expanded(
+                            child: Row(
                             children: [
                               Image.asset('assets/images/red-circle-icon.png'),
                               SizedBox(width: 10),
                               Text("목적지 : "),
                               Flexible(
                                   child: Text(
-                                      '${CarServiceState().destinationAddress}'))
+                                    CarServiceState().destinationAddress?? ' ',
+                                     overflow: TextOverflow.ellipsis,
+                                ))
                             ],
+                          ),
                           ),
                           onTap: () {
                             _goToSearch();
@@ -191,7 +211,7 @@ class _CarPage extends State<CarPage> {
                     ),
                   ),
                   NextButton(
-                    title: "다음",
+                    title: "신청하기",
                     onPressed: areDepartureAndDestinationSet()
                         ? () => _submitForm()
                         : null,
