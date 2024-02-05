@@ -73,16 +73,17 @@ class VtInfo extends StatelessWidget {
                           SizedBox(width: 10),
                           Column(
                             children: [
-                              category=='car'
-                              ? Text(
-                                vtData['carNumber'],
-                                style: appTextTheme().bodyLarge!.copyWith(color: subAccentColor),
-                              )
-                              : Container(),
+                              category == 'car'
+                                  ? Text(
+                                      vtData['carNumber'],
+                                      style: appTextTheme()
+                                          .bodyLarge!
+                                          .copyWith(color: subAccentColor),
+                                    )
+                                  : Container(),
                               Text(
                                 vtData['name'],
                                 style: appTextTheme().bodyMedium,
-              
                               ),
                             ],
                           )
@@ -92,7 +93,7 @@ class VtInfo extends StatelessWidget {
                       InkWell(
                         onTap: () async {
                           final url = Uri.parse('tel:${vtData['phoneNumber']}');
-                           print('tel:${vtData['phoneNumber']}');
+                          print('tel:${vtData['phoneNumber']}');
                           if (await canLaunchUrl(url)) {
                             await launchUrl(url);
                           } else {
