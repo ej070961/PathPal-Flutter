@@ -8,10 +8,10 @@ class CancelButton extends StatefulWidget {
   final String title;
   final VoidCallback? onPressed;
 
-  CancelButton({
+  CancelButton({super.key, 
     required this.title,
     required this.onPressed, // 필수 파라미터로 지정
-  }) : super();
+  });
 
   @override
   State<CancelButton> createState() => _State();
@@ -20,25 +20,11 @@ class CancelButton extends StatefulWidget {
 class _State extends State<CancelButton> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
+      height: 45,
       child: ElevatedButton(
-        onPressed: () {
-          print("취소");
-        },
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            BuildImage.buildImage(AppImages.cancelIconImagePath,
-                width: 13),
-            Text(
-              "봉사 취소하기",
-              style: appTextTheme()
-                  ?.bodyMedium
-                  ?.copyWith(color: Colors.red), // 텍스트 색상 빨강으로 변경
-            ),
-          ],
-        ),
+        onPressed: widget.onPressed,
         style: ButtonStyle(
           overlayColor:
           MaterialStateProperty.all(Colors.transparent),
@@ -53,6 +39,21 @@ class _State extends State<CancelButton> {
               BorderRadius.zero, // 테두리 둥글게 만드는 효과 없애기
             ),
           ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            BuildImage.buildImage(AppImages.cancelIconImagePath,
+                width: 14),
+            SizedBox(width: 5),
+            Text(
+              widget.title,
+              style: appTextTheme()
+                  .bodyMedium
+                  ?.copyWith(color: Colors.red), // 텍스트 색상 빨강으로 변경
+            ),
+          ],
         ),
       ),
     );

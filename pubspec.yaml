@@ -46,6 +46,8 @@ dependencies:
   provider: ^6.1.1
   adaptive_dialog: ^2.0.0
   flutter_dialogs: ^3.0.0
+  flutter_rating_bar: ^4.0.0
+  url_launcher: ^6.2.4
 
 
 
@@ -89,6 +91,7 @@ flutter:
     - assets/images/car-image.png
     - assets/images/walk-image.png
     - assets/images/left-arrow-icon.png
+    - assets/images/cancel-icon.png
     - .env
   fonts:
     - family: login

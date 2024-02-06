@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pathpal/colors.dart';
 import 'package:pathpal/models/car_model.dart';
-import 'package:pathpal/screens/dp/car/car_progress.dart';
+import 'package:pathpal/screens/dp/progress.dart';
 import 'package:pathpal/screens/dp/car/car_search.dart';
 import 'package:pathpal/utils/app_images.dart';
 import 'package:pathpal/widgets/build_image.dart';
@@ -13,6 +14,7 @@ import 'package:pathpal/widgets/next_button.dart';
 import 'package:pathpal/models/car_state.dart';
 import 'package:pathpal/service/firestore/car_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:geocoding/geocoding.dart';
 
 class CarPage extends StatefulWidget {
   const CarPage({super.key});
@@ -48,11 +50,20 @@ class _CarPage extends State<CarPage> {
   }
 
   void _getcurrentLocation() async {
-    final currentLocation = await mapService.getCurrentLocation();
+    final currentLatLng= await mapService.getCurrentLocation();
+     // 역지오코딩을 통해 현재 위치의 주소를 가져옵니다.
+    final placemarks = await placemarkFromCoordinates(
+        currentLatLng.latitude, currentLatLng.longitude);
 
-    setState(() {
-      CarServiceState().departureLatLng = currentLocation;
+    if (placemarks.isNotEmpty) {
+      final placemark = placemarks.first;
+      final address ='${placemark.street}';
+      CarServiceState().departureAddress = address; // 현재 위치의 주소를 반환
+    } else {
       CarServiceState().departureAddress = '현 위치';
+    }
+    setState(() {
+      CarServiceState().departureLatLng = currentLatLng;
     });
   }
 
@@ -93,16 +104,21 @@ class _CarPage extends State<CarPage> {
         destinationAddress: destinationAddress,
         destinationLatLng: destinationLatLng,
         dpUid: dpUid,
-        status: "boarding");
+        status: "waiting");
 
     firebaseService.saveCarServiceData(car)
-    .then((isSuccess) {
-      if (isSuccess) {
+    .then((docId) {
+      if (docId != null) {
         CarServiceState().resetState();
+        Fluttertoast.showToast(
+          msg: '접수가 완료되었어요!',
+          gravity: ToastGravity.BOTTOM,
+          toastLength: Toast.LENGTH_SHORT,
+        );
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => Container(child: CarProgress()),
+              builder: (context) => Container(child: Progress(docId: docId, category: 'car')),
             ));
       } else {
         // 회원 정보 저장 실패 시 로그인 창으로 이동
@@ -121,6 +137,7 @@ class _CarPage extends State<CarPage> {
           leading: IconButton(
               onPressed: () {
                 Navigator.pop(context);
+                CarServiceState().resetState();
               },
               icon: Icon(Icons.arrow_back)),
           centerTitle: true,
@@ -151,18 +168,24 @@ class _CarPage extends State<CarPage> {
                       padding: EdgeInsets.all(20),
                       child: Column(children: [
                         GestureDetector(
-                          child: Row(
+                          child: Expanded(
+                            child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Image.asset('assets/images/circle-icon.png'),
+                              BuildImage.buildImage(
+                                  AppImages.circleIconImagePath),
                               SizedBox(width: 10),
                               Flexible(
                                 child: Text("출발지 : "),
                               ),
                               Flexible(
-                                  child:
-                                      Text('${CarServiceState().departureAddress}'))
+                                  child: Text(
+                                    CarServiceState().departureAddress ?? '',
+                                    overflow: TextOverflow.ellipsis,
+                                  )
+                              )
                             ],
+                            )
                           ),
                           onTap: () {
                             _goToSearch();
@@ -171,15 +194,20 @@ class _CarPage extends State<CarPage> {
                         SizedBox(height: 5),
                         Divider(color: gray200),
                         GestureDetector(
-                          child: Row(
+                          child: Expanded(
+                            child: Row(
                             children: [
-                              Image.asset('assets/images/red-circle-icon.png'),
+                              BuildImage.buildImage(
+                                    AppImages.redCircleIconImagePath),
                               SizedBox(width: 10),
                               Text("목적지 : "),
                               Flexible(
                                   child: Text(
-                                      '${CarServiceState().destinationAddress}'))
+                                    CarServiceState().destinationAddress?? ' ',
+                                     overflow: TextOverflow.ellipsis,
+                                ))
                             ],
+                          ),
                           ),
                           onTap: () {
                             _goToSearch();
@@ -191,7 +219,7 @@ class _CarPage extends State<CarPage> {
                     ),
                   ),
                   NextButton(
-                    title: "다음",
+                    title: "신청하기",
                     onPressed: areDepartureAndDestinationSet()
                         ? () => _submitForm()
                         : null,

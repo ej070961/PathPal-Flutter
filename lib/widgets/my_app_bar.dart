@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:pathpal/colors.dart';
 import 'package:pathpal/theme.dart';
 
-class ProgressAppBar extends StatelessWidget implements PreferredSizeWidget{
-  const ProgressAppBar({super.key});
+class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const MyAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class ProgressAppBar extends StatelessWidget implements PreferredSizeWidget{
         automaticallyImplyLeading: false,
         centerTitle: true,
         title: Text(
-          "진행상태",
+          "마이페이지",
           style: appTextTheme().titleMedium,
         ),
       ),

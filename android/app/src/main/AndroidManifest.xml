@@ -2,6 +2,13 @@
  	<!-- 위치 정보 엑세스 권한 요청 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/> 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <queries>
+        <!-- If your app makes calls -->
+        <intent>
+            <action android:name="android.intent.action.DIAL" />
+            <data android:scheme="tel" />
+        </intent>
+    </queries>
     <application
         android:label="flutter_demo"
         android:name="${applicationName}"

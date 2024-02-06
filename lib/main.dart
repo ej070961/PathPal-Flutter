@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:pathpal/screens/dp/car/car_page.dart';
+import 'package:pathpal/screens/dp/progress.dart';
 import 'package:pathpal/screens/dp/login.dart';
 import 'package:pathpal/screens/dp/walk/walk_page.dart';
 import 'package:pathpal/screens/vt/car_main.dart';

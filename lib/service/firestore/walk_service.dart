@@ -2,12 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pathpal/models/walk_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class CarService {
+class WalkService {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  Future<bool> saveWalkServiceData(WalkModel wm) async {
+  Future<String?> saveWalkServiceData(WalkModel wm) async {
     try {
-      await firestore.collection('walks').doc().set({
+       DocumentReference docRef = await firestore.collection('walks').add({
         'departure_address': wm.departureAddress,
         'departure_latlng': GeoPoint(
             wm.departureLatLng!.latitude, wm.departureLatLng!.longitude),
@@ -17,7 +17,7 @@ class CarService {
         'dp_uid': wm.dpUid
       });
       print('Successfully saved');
-      return true; // 정보 저장 성공
+      return docRef.id; // 저장된 문서의 ID를 반환
     } catch (error) {
       print(error.toString());
       Fluttertoast.showToast(
@@ -25,7 +25,7 @@ class CarService {
         gravity: ToastGravity.BOTTOM,
         toastLength: Toast.LENGTH_SHORT,
       );
-      return false; // 정보 저장 실패
+      return null; // 정보 저장 실패
     }
   }
 }
