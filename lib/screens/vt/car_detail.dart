@@ -82,7 +82,7 @@ class _CarDetailState extends State<CarDetail> {
                   FirebaseFirestore.instance
                       .collection('cars')
                       .doc(widget.carSnapshot.id)
-                      .update({'volunteer_time': selectedDate, 'vt_uid': widget.vtUid})
+                      .update({'volunteer_time': selectedDate, 'vt_uid': widget.vtUid, 'status' : "going"})
                       .then((_) => Navigator.push(context, MaterialPageRoute(
                       builder: (context) => VtProgress(carId: widget.carSnapshot.id,arriveTime: FormatTime.formatTime(selectedDate) + " 도착 예정",)))
                       .catchError((error) => print('Update failed: $error')));
