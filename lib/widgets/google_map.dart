@@ -6,31 +6,46 @@ class MyGoogleMap  extends StatelessWidget{
   final Set<Marker> markers;
   final Function? onMapCreated;
   final Function? currentLocationFunction;
+  final Function? onTap;
 
   MyGoogleMap({
-    Key? key, 
+    Key? key,
     this.center,
     required this.markers,
     this.onMapCreated,
     this.currentLocationFunction,
-  }) : super(key: key); 
+    this.onTap
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+
+    if (center == null) {
+      // center 값이 null인 경우에는 CircularProgressIndicator를 반환
+      return CircularProgressIndicator();
+    }
+
     return Stack(
       children: [
-        GoogleMap(
-          onMapCreated: (controller) {
-            if (onMapCreated != null) {
-              onMapCreated!(controller);
+        GestureDetector(
+          onTap: () {
+            if (onTap != null) {
+              onTap!();
             }
           },
-          zoomControlsEnabled: false,
-          initialCameraPosition: CameraPosition(
-            target: center!,
-            zoom: 13.0,
+          child: GoogleMap(
+            onMapCreated: (controller) {
+              if (onMapCreated != null) {
+                onMapCreated!(controller);
+              }
+            },
+            zoomControlsEnabled: false,
+            initialCameraPosition: CameraPosition(
+              target: center!,
+              zoom: 13.0,
+            ),
+            markers: markers,
           ),
-          markers: markers,
         ),
         Positioned(
           bottom: 30,
