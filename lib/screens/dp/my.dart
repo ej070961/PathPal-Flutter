@@ -2,11 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pathpal/colors.dart';
+import 'package:pathpal/screens/dp/login.dart';
 import 'package:pathpal/screens/dp/requests.dart';
-import 'package:pathpal/screens/dp/revise_info.dart';
 import 'package:pathpal/theme.dart';
 import 'package:pathpal/widgets/build_image.dart';
+import 'package:pathpal/widgets/custom_dialog.dart';
 import 'package:pathpal/widgets/my_app_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -19,6 +21,31 @@ class _MyPageState extends State<MyPage> {
   //현재 로그인 중인 사용자 id 가져오기
   final dpUid = FirebaseAuth.instance.currentUser!.uid;
 
+  void _logout(context) async {
+    showDialog<void>(
+        context: context,
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context) {
+          return RectangleDialog(
+            title: '로그아웃',
+            message: '정말로 로그아웃 하시겠습니까?',
+            okLabel: '확인',
+            cancelLabel: '취소',
+            okPressed: () {
+             Future.wait([
+                FirebaseAuth.instance.signOut(),
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => DpLogin()), // 로그인 페이지로 이동
+                  (route) => false, // 모든 페이지 스택을 제거
+                ),
+              ]);
+  
+            },
+          );
+        });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,17 +102,12 @@ class _MyPageState extends State<MyPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "내 정보 관리",
+                          "로그아웃",
                           style: appTextTheme().bodyLarge,
                         ),
                         IconButton(
                           icon: const Icon(Icons.chevron_right),
-                          onPressed: () =>  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => ReviseInfo()
-                                      ),
-                                    ),
+                          onPressed: () =>  _logout(context)
                         )
                       ],
                   )
