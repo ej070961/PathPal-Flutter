@@ -74,15 +74,13 @@ class _WalkMainState extends State<WalkMain> {
         appBar: MyAppBar(
           title: "PathPal",
         ),
-        body: Expanded(
-          child: MyGoogleMap(
-            center: _center,
-            currentLocationFunction: _currentLocation,
-            markers: _markers,
-            onMapCreated: (controller) {
-              mapController = controller;
-            },
-          ),
+        body: MyGoogleMap(
+          center: _center,
+          currentLocationFunction: _currentLocation,
+          markers: _markers,
+          onMapCreated: (controller) {
+            mapController = controller;
+          },
         ),
       );
     }
