@@ -172,7 +172,8 @@ class _CarPage extends State<CarPage> {
                             child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Image.asset('assets/images/circle-icon.png'),
+                              BuildImage.buildImage(
+                                  AppImages.circleIconImagePath),
                               SizedBox(width: 10),
                               Flexible(
                                 child: Text("출발지 : "),
@@ -196,7 +197,8 @@ class _CarPage extends State<CarPage> {
                           child: Expanded(
                             child: Row(
                             children: [
-                              Image.asset('assets/images/red-circle-icon.png'),
+                              BuildImage.buildImage(
+                                    AppImages.redCircleIconImagePath),
                               SizedBox(width: 10),
                               Text("목적지 : "),
                               Flexible(
