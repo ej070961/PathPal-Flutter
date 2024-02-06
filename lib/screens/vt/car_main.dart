@@ -83,6 +83,7 @@ class _CarMainState extends State<CarMain> {
                   child: StreamBuilder<QuerySnapshot>(
                       stream: FirebaseFirestore.instance
                           .collection('cars')
+                          .where('status', isEqualTo: 'waiting')
                           .snapshots(),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
