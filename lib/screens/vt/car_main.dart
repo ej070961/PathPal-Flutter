@@ -213,7 +213,7 @@ class _CarMainState extends State<CarMain> {
               onTap: () {
                 setState(() {
                   if (_selectedItemIndex != null) {
-// 이전에 선택된 아이템이 있으면
+                    // 이전에 선택된 아이템이 있으면
                     _isImageVisibleList[_selectedItemIndex!] =
                         false; // 이전에 선택된 아이템의 이미지를 숨김
                   }
@@ -293,7 +293,7 @@ class _CarMainState extends State<CarMain> {
       List<Placemark> placemarks =
           await placemarkFromCoordinates(latitude, longitude);
 
-      if (placemarks != null && placemarks.isNotEmpty) {
+      if (placemarks.isNotEmpty) {
         final Placemark pos = placemarks[0];
         return pos.street;
       }

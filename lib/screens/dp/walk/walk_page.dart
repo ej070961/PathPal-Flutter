@@ -192,7 +192,8 @@ class _WalkPageState extends State<WalkPage> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Image.asset('assets/images/circle-icon.png'),
+                                  BuildImage.buildImage(
+                                      AppImages.circleIconImagePath),
                                   SizedBox(width: 10),
                                   Flexible(
                                     child:
