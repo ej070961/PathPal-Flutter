@@ -81,7 +81,7 @@ class _WalkDetailState extends State<WalkDetail> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => VtProgress(
-                                    carId: widget.walkSnapshot.id,
+                                    walkId: widget.walkSnapshot.id,
                                     arriveTime:
                                         FormatTime.formatTime(selectedDate) +
                                             " 도착 예정",

@@ -19,9 +19,10 @@ import '../../widgets/custom_dialog.dart';
 
 class VtProgress extends StatefulWidget {
   String? arriveTime = "";
-  String carId;
+  String? carId;
+  String? walkId;
 
-  VtProgress({this.arriveTime, required this.carId});
+  VtProgress({this.arriveTime, this.carId, this.walkId});
 
   @override
   State<VtProgress> createState() => _VtProgressState();
@@ -97,12 +98,21 @@ class _VtProgressState extends State<VtProgress> {
                         okLabel: '확인',
                         cancelLabel: '취소',
                         okPressed: () {
-                          FirebaseFirestore.instance
+                          if(widget.carId != null){
+                            FirebaseFirestore.instance
                               .collection('cars')
                               .doc(widget.carId)
                               .update({'status': 'boarding'}).then((_) {
                             Navigator.of(context).popUntil((route) => route.isFirst);
                           });
+                          } else if(widget.walkId != null){
+                            FirebaseFirestore.instance
+                                .collection('walks')
+                                .doc(widget.walkId)
+                                .update({'status': 'boarding'}).then((_) {
+                              Navigator.of(context).popUntil((route) => route.isFirst);
+                            });
+                          }
                         },
                       );
                     },
