@@ -64,6 +64,10 @@ class _WalkMainState extends State<WalkMain> {
   }
 
   void _onMarkerTapped(DocumentSnapshot walk) {
+    Set<Marker> markers = new Set();
+    Marker? selectedMarker = _markers.firstWhere((marker) => marker.markerId.value == walk['dp_uid']);
+    markers.add(selectedMarker);
+
     String departureAddress = walk['departure_address'];
     DateTime date = walk['departure_time'].toDate() ?? DateTime(2024, 1, 31);
 
@@ -90,7 +94,7 @@ class _WalkMainState extends State<WalkMain> {
                   await Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => WalkDetail(
                         vtUid: walk['dp_uid'] ?? '',
-                        markers: _markers,
+                        markers: markers,
                         center: _center,
                         onMapCreated: (controller) {
                           mapController = controller;
@@ -181,7 +185,7 @@ class _WalkMainState extends State<WalkMain> {
         LatLng location = LatLng(geoPoint.latitude, geoPoint.longitude);
         _markers.add(
           Marker(
-            markerId: MarkerId(location.toString()),
+            markerId: MarkerId(data['dp_uid']),
             position: location,
             icon: BitmapDescriptor.defaultMarker,
             onTap: () {
