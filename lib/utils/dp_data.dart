@@ -9,6 +9,7 @@ class DpData {
   static GeoPoint? location;
   static String? departureAddress;
   static String? destinationAddress;
+  static String? content;
   static DateTime time = DateTime.now();
 
   static void setCarData(dynamic dpSnapshot, dynamic carSnapshot) {
@@ -32,5 +33,6 @@ class DpData {
     location = walkSnapshot['departure_latlng'];
     departureAddress = walkSnapshot['departure_address'];
     time = walkSnapshot['departure_time'].toDate();
+    content = walkSnapshot['content'];
   }
 }

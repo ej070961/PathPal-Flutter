@@ -53,7 +53,7 @@ class _WalkDetailState extends State<WalkDetail> {
       ),
       body: Column(
         children: [
-          DpInfo(),
+          DpInfoWithComment(backgroundColor: background),
           Expanded(
             child: MyGoogleMap(
               markers: widget.markers,
