@@ -7,17 +7,22 @@ class ItemInfoList extends StatelessWidget {
 
   final String imagePath;
   final String label;
-  final String data;
+  final String? data;
 
   ItemInfoList({
     super.key,
     required this.imagePath,
     required this.label,
-    required this.data,
+    this.data,
   });
 
   @override
   Widget build(BuildContext context) {
+    if (data == null) {
+      // data가 null인 경우에는 아무것도 반환하지 않습니다.
+      return Container();
+    }
+
     return Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
