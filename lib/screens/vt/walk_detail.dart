@@ -53,7 +53,7 @@ class _WalkDetailState extends State<WalkDetail> {
       ),
       body: Column(
         children: [
-          DpInfo(),
+          DpInfoWithComment(backgroundColor: background),
           Expanded(
             child: MyGoogleMap(
               markers: widget.markers,
@@ -81,7 +81,7 @@ class _WalkDetailState extends State<WalkDetail> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => VtProgress(
-                                    carId: widget.walkSnapshot.id,
+                                    walkId: widget.walkSnapshot.id,
                                     arriveTime:
                                         FormatTime.formatTime(selectedDate) +
                                             " 도착 예정",
