@@ -47,7 +47,7 @@ class _CarDetailState extends State<CarDetail> {
   @override
   Widget build(BuildContext context) {
 
-    DpData.setData(widget.dpSnapshot, widget.carSnapshot);
+    DpData.setCarData(widget.dpSnapshot, widget.carSnapshot);
 
     return Scaffold(
       appBar: AppBar(

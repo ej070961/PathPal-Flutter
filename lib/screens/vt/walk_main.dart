@@ -2,12 +2,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pathpal/colors.dart';
+import 'package:pathpal/screens/vt/walk_detail.dart';
 import 'package:pathpal/widgets/appBar.dart';
 import 'package:pathpal/widgets/google_map.dart';
 import 'package:pathpal/widgets/next_button.dart';
 
 import '../../service/map_service.dart';
+import '../../theme.dart';
+import '../../utils/app_images.dart';
+import '../../utils/format_time.dart';
+import '../../widgets/build_image.dart';
 import '../../widgets/dp_info.dart';
+import '../../widgets/item_info_list.dart';
 
 class WalkMain extends StatefulWidget {
   const WalkMain({super.key});
@@ -22,68 +28,30 @@ class _WalkMainState extends State<WalkMain> {
   final Set<Marker> _markers = {};
   List<Map<String, LatLng>> items = [];
   LatLng? _center;
-  bool _showCustomWidget = false;
+  static bool isMarkerMain = true;
 
   @override
   Widget build(BuildContext context) {
-    if (_showCustomWidget) {
+    if (_center == null) {
       return Scaffold(
-        body: Stack(
-          //Stack 위젯 추가
-          children: [
-            // Google Map
-            Positioned.fill(
-              child: MyGoogleMap(
-                center: _center,
-                currentLocationFunction: _currentLocation,
-                markers: _markers,
-                onMapCreated: (controller) {
-                  mapController = controller;
-                },
-                onTap: () {
-                  setState(() {
-                    _showCustomWidget = false;
-                    print("df");
-                  });
-                },
-              ),
-            ),
-            // DpInfo (상단에 배치)
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              height: 200,
-              child: DpInfo(backgroundColor: background,),
-            ),
-            // NextButton (하단에 배치)
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: NextButton(
-                title: "확인",
-                onPressed: () {},
-              ),
-            ),
-          ],
-        ),
-      );
-    } else {
-      return Scaffold(
-        appBar: MyAppBar(
-          title: "PathPal",
-        ),
-        body: MyGoogleMap(
-          center: _center,
-          currentLocationFunction: _currentLocation,
-          markers: _markers,
-          onMapCreated: (controller) {
-            mapController = controller;
-          },
+        body: Center(
+          child: CircularProgressIndicator(),
         ),
       );
     }
+    return Scaffold(
+      appBar: MyAppBar(
+        title: "PathPal",
+      ),
+      body: MyGoogleMap(
+        center: _center,
+        currentLocationFunction: _currentLocation,
+        markers: _markers,
+        onMapCreated: (controller) {
+          mapController = controller;
+        },
+      ),
+    );
   }
 
   @override
@@ -95,10 +63,91 @@ class _WalkMainState extends State<WalkMain> {
     fetchWalksData();
   }
 
-  void _onMarkerTapped() {
-    setState(() {
-      _showCustomWidget = true;
-    });
+  void _onMarkerTapped(DocumentSnapshot walk) {
+    Set<Marker> markers = new Set();
+    Marker? selectedMarker = _markers.firstWhere((marker) => marker.markerId.value == walk['dp_uid']);
+    markers.add(selectedMarker);
+
+    String departureAddress = walk['departure_address'];
+    DateTime date = walk['departure_time'].toDate() ?? DateTime(2024, 1, 31);
+
+    showModalBottomSheet(
+      context: context,
+      barrierColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection('disabledPerson')
+                .doc(walk['dp_uid'])
+                .snapshots(),
+            builder: (BuildContext context,
+                AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
+                    snapshot) {
+              if (!snapshot.hasData) {
+                return CircularProgressIndicator();
+              }
+              var doc = snapshot.data!;
+              return InkWell(
+                onTap: () async {
+                  isMarkerMain = false;
+
+                  await Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => WalkDetail(
+                        vtUid: walk['dp_uid'] ?? '',
+                        markers: markers,
+                        center: _center,
+                        onMapCreated: (controller) {
+                          mapController = controller;
+                        },
+                        currentLocationFunction: _currentLocation,
+                        dpSnapshot: snapshot,
+                        walkSnapshot: walk,
+                      )));
+                  isMarkerMain = true;
+                },
+                child: Container(
+                  width: double.infinity,
+                  height: 100, // 원하는 높이로 설정
+                  padding: EdgeInsets.fromLTRB(20, 30, 20, 20),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Column(
+                        children: [
+                          BuildImage.buildProfileImage(doc.get('profileUrl'),
+                              width: 30),
+                          Text(
+                            doc.get('name'),
+                            style: appTextTheme().labelSmall,
+                          )
+                        ],
+                      ),
+                      Flexible(
+                          child: Column(
+                            children: [
+                              ItemInfoList(
+                                imagePath: AppImages.redCircleIconImagePath,
+                                label: '출발지',
+                                data: departureAddress,
+                              ),
+                              ItemInfoList(
+                                  imagePath: AppImages.timerIconImagePath,
+                                  label: '출발시간',
+                                  data: FormatTime.formatTime(
+                                    date,
+                                  )),
+                            ],
+                          ))
+                    ],
+                  ),
+                ),
+              );
+            });
+      },
+    );
   }
 
   void _currentLocation() async {
@@ -113,9 +162,7 @@ class _WalkMainState extends State<WalkMain> {
             icon:
                 BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
             alpha: 0.8,
-            onTap: () {
-              _onMarkerTapped();
-            }),
+            onTap: () {}),
       );
     });
     mapController.animateCamera(CameraUpdate.newCameraPosition(
@@ -138,9 +185,15 @@ class _WalkMainState extends State<WalkMain> {
         LatLng location = LatLng(geoPoint.latitude, geoPoint.longitude);
         _markers.add(
           Marker(
-            markerId: MarkerId(location.toString()),
+            markerId: MarkerId(data['dp_uid']),
             position: location,
             icon: BitmapDescriptor.defaultMarker,
+            onTap: () {
+              //walk 마커 정보를 줘야됨
+              if (isMarkerMain == true) {
+                _onMarkerTapped(doc);
+              }
+            },
           ),
         );
       }

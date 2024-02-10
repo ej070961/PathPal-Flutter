@@ -60,7 +60,7 @@ class DpInfo extends StatelessWidget {
               ItemInfoList(
                 imagePath: AppImages.redCircleIconImagePath,
                 label: '도착지',
-                data: DpData.destinationAddress.toString(),
+                data: DpData.destinationAddress != null ? DpData.destinationAddress.toString() : null,
               ),
               SizedBox(
                 height: 5,
