@@ -25,6 +25,7 @@ class DpData {
   }
 
   static void setWalkData(dynamic dpSnapshot, dynamic walkSnapshot) {
+    resetDestination();
     name = dpSnapshot.data?.get('name');
     profileUrl = dpSnapshot.data?.get('profileUrl');
     disabilityType = dpSnapshot.data?.get('disabilityType');
@@ -35,4 +36,9 @@ class DpData {
     time = walkSnapshot['departure_time'].toDate();
     content = walkSnapshot['content'];
   }
+
+  static void resetDestination() {
+    destinationAddress = null;
+  }
+
 }
