@@ -16,6 +16,20 @@ class UserService {
       'phoneNumber': volunteer.phoneNumber,
     });
   }
+  Future<Volunteer> getVolunteer(String uid) async {
+    try {
+      final volunteerSnapshot = await firestore.collection('volunteers').doc(uid).get();
+      if (volunteerSnapshot.exists) {
+        return Volunteer.fromSnapshot(volunteerSnapshot);
+      } else {
+        throw Exception("No such volunteer exists");
+      }
+    } catch (e) {
+      // 오류 처리
+      print(e.toString());
+      throw e;
+    }
+  }
 
   Future<bool> saveDisabledPerson(DisabledPerson dp) async {
     try {

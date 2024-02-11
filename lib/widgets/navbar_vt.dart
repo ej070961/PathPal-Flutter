@@ -1,27 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:pathpal/colors.dart';
-import 'package:pathpal/screens/dp/chatbot.dart';
-import 'package:pathpal/screens/dp/home.dart';
 import 'package:pathpal/screens/dp/my.dart';
 import 'package:pathpal/screens/vt/car_main.dart';
 import 'package:pathpal/screens/vt/walk_main.dart';
+
+import '../models/volunteer.dart';
+import '../service/firestore/user_service.dart';
 
 class VtNavBar extends StatefulWidget {
   final String vtUid;
   const VtNavBar({super.key, required this.vtUid});
 
   @override
-  State<VtNavBar> createState() => _DpNavBarState();
+  State<VtNavBar> createState() => _VtNavBarState();
 }
 
-class _DpNavBarState extends State<VtNavBar> {
+class _VtNavBarState extends State<VtNavBar> {
+  final firebaseService = UserService(); // UserService 인스턴스 생성
+  Volunteer? volunteer;
 
-  int selectedIndex = 0;
+  int selectedIndex = 1;
 
   void _onItemTapped(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
+    if (index == 0 && (volunteer?.carNumber == null)) {
+      // carNumber가 없는 경우, 로직을 수행하지 않음
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("차량 번호가 없습니다. 정보를 완성해주세요.")),
+      );
+    } else {
+      // carNumber가 있는 경우 또는 다른 탭을 선택한 경우
+      setState(() {
+        selectedIndex = index;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVolunteerData();
+  }
+
+  Future<void> _loadVolunteerData() async {
+    volunteer = await firebaseService.getVolunteer(widget.vtUid);
+
+    if(volunteer?.carNumber == null){
+      selectedIndex = 1;
+    }else{
+      selectedIndex = 0;
+    }
   }
 
   @override
@@ -37,7 +64,6 @@ class _DpNavBarState extends State<VtNavBar> {
           ],
         ) ,
       ),
-
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         items: const <BottomNavigationBarItem>[
@@ -64,7 +90,6 @@ class _DpNavBarState extends State<VtNavBar> {
         selectedItemColor: mainAccentColor,
         onTap: _onItemTapped,
       ),
-
     );
 
   }

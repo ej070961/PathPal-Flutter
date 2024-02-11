@@ -188,6 +188,7 @@ class _CarMainState extends State<CarMain> {
                       child: GestureDetector(
                         onTap: () {
                           // 여기에 이미지를 눌렀을 때 실행할 로직을 작성합니다.
+
                           Navigator.push(
                               context,
                               MaterialPageRoute(

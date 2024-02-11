@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pathpal/colors.dart';
@@ -29,6 +32,8 @@ class _WalkMainState extends State<WalkMain> {
   List<Map<String, LatLng>> items = [];
   LatLng? _center;
   static bool isMarkerMain = true;
+  final Completer<GoogleMapController> _controllerCompleter = Completer(); // Completer를 추가하세요.
+
 
   @override
   Widget build(BuildContext context) {
@@ -43,16 +48,61 @@ class _WalkMainState extends State<WalkMain> {
       appBar: MyAppBar(
         title: "PathPal",
       ),
-      body: MyGoogleMap(
-        center: _center,
-        currentLocationFunction: _currentLocation,
-        markers: _markers,
-        onMapCreated: (controller) {
-          mapController = controller;
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('walks').where('status', isEqualTo: 'waiting').snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text('Something went wrong'));
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          final currentLocationMarker = _markers.firstWhereOrNull((marker) => marker.markerId.value == 'myLocation');
+
+          _markers.clear();
+
+          if (currentLocationMarker != null) {
+            _markers.add(currentLocationMarker);
+          }
+
+          snapshot.data?.docs.forEach((doc) {
+            Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
+            if (data != null) {
+              GeoPoint geoPoint = data['departure_latlng'];
+              LatLng location = LatLng(geoPoint.latitude, geoPoint.longitude);
+              _markers.add(
+                Marker(
+                  markerId: MarkerId(data['departure_address']),
+                  position: location,
+                  icon: BitmapDescriptor.defaultMarker,
+                  onTap: () {
+                    if (isMarkerMain == true) {
+                      _onMarkerTapped(doc);
+                    }
+                  },
+                ),
+              );
+            }
+          });
+
+          return MyGoogleMap(
+            center: _center,
+            currentLocationFunction: _currentLocation,
+            markers: _markers,
+            onMapCreated: (controller) {
+              if (!_controllerCompleter.isCompleted) {
+                _controllerCompleter.complete(controller); // Controller를 Completer에 연결하세요.
+              }
+              mapController = controller;
+            },
+          );
         },
       ),
     );
   }
+
 
   @override
   void initState() {
@@ -60,12 +110,11 @@ class _WalkMainState extends State<WalkMain> {
 
     _currentLocation(); // 현재 위치 마커를 불러옵니다.
 
-    fetchWalksData();
   }
 
   void _onMarkerTapped(DocumentSnapshot walk) {
     Set<Marker> markers = new Set();
-    Marker? selectedMarker = _markers.firstWhere((marker) => marker.markerId.value == walk['dp_uid']);
+    Marker? selectedMarker = _markers.firstWhere((marker) => marker.markerId.value == walk['departure_address']);
     markers.add(selectedMarker);
 
     String departureAddress = walk['departure_address'];
@@ -157,12 +206,12 @@ class _WalkMainState extends State<WalkMain> {
       _center = currentLocation;
       _markers.add(
         Marker(
-            markerId: MarkerId('myLocation'),
-            position: _center!,
-            icon:
-                BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-            alpha: 0.8,
-            onTap: () {}),
+          markerId: MarkerId('myLocation'),
+          position: _center!,
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+          alpha: 0.8,
+          onTap: () {},
+        ),
       );
     });
     mapController.animateCamera(CameraUpdate.newCameraPosition(
@@ -173,30 +222,4 @@ class _WalkMainState extends State<WalkMain> {
     ));
   }
 
-  Future<void> fetchWalksData() async {
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    QuerySnapshot snapshot = await firestore.collection('walks').get();
-
-    snapshot.docs.forEach((doc) {
-      Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
-      if (data != null) {
-        // data가 null인지 확인
-        GeoPoint geoPoint = data['departure_latlng'];
-        LatLng location = LatLng(geoPoint.latitude, geoPoint.longitude);
-        _markers.add(
-          Marker(
-            markerId: MarkerId(data['dp_uid']),
-            position: location,
-            icon: BitmapDescriptor.defaultMarker,
-            onTap: () {
-              //walk 마커 정보를 줘야됨
-              if (isMarkerMain == true) {
-                _onMarkerTapped(doc);
-              }
-            },
-          ),
-        );
-      }
-    });
-  }
 }
