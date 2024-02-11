@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pathpal/colors.dart';
@@ -29,6 +32,8 @@ class _WalkMainState extends State<WalkMain> {
   List<Map<String, LatLng>> items = [];
   LatLng? _center;
   static bool isMarkerMain = true;
+  final Completer<GoogleMapController> _controllerCompleter = Completer(); // Completer를 추가하세요.
+
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +59,14 @@ class _WalkMainState extends State<WalkMain> {
             return Center(child: CircularProgressIndicator());
           }
 
+          final currentLocationMarker = _markers.firstWhereOrNull((marker) => marker.markerId.value == 'myLocation');
+
           _markers.clear();
+
+          if (currentLocationMarker != null) {
+            _markers.add(currentLocationMarker);
+          }
+
           snapshot.data?.docs.forEach((doc) {
             Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
             if (data != null) {
@@ -80,6 +92,9 @@ class _WalkMainState extends State<WalkMain> {
             currentLocationFunction: _currentLocation,
             markers: _markers,
             onMapCreated: (controller) {
+              if (!_controllerCompleter.isCompleted) {
+                _controllerCompleter.complete(controller); // Controller를 Completer에 연결하세요.
+              }
               mapController = controller;
             },
           );
@@ -94,6 +109,7 @@ class _WalkMainState extends State<WalkMain> {
     super.initState();
 
     _currentLocation(); // 현재 위치 마커를 불러옵니다.
+
   }
 
   void _onMarkerTapped(DocumentSnapshot walk) {
@@ -190,12 +206,12 @@ class _WalkMainState extends State<WalkMain> {
       _center = currentLocation;
       _markers.add(
         Marker(
-            markerId: MarkerId('myLocation'),
-            position: _center!,
-            icon:
-                BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-            alpha: 0.8,
-            onTap: () {}),
+          markerId: MarkerId('myLocation'),
+          position: _center!,
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+          alpha: 0.8,
+          onTap: () {},
+        ),
       );
     });
     mapController.animateCamera(CameraUpdate.newCameraPosition(

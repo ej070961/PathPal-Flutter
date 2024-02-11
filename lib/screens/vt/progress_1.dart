@@ -48,76 +48,49 @@ class _VtProgressState extends State<VtProgress> {
               Container(height: stepperHeight, child: stepper),
               Expanded(
                   child: Column(
-                children: [
-                  SizedBox(
-                    height: 30,
-                  ),
-                  CancelButton(
-                      title: "봉사 취소하기",
-                      onPressed: () {
-                        print('봉사 취소하기');
-                      }),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Container(
-                    width: double.infinity,
-                    height: 40,
-                    child: Container(
-                      margin: EdgeInsets.fromLTRB(30.0, 8.0, 0, 0),
-                      child: Text(
-                        '${widget.arriveTime}',
-                        style: appTextTheme().bodyLarge,
+                    children: [
+                      SizedBox(
+                        height: 30,
                       ),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border(
-                        bottom: BorderSide(
-                          color: gray200,
-                          width: 0.5,
+                      buildButton(
+                        title: "봉사 취소하기",
+                        dialogTitle: '봉사 취소',
+                        dialogMessage: '정말로 봉사를 취소하시겠습니까?',
+                        status: 'waiting',
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Container(
+                        width: double.infinity,
+                        height: 40,
+                        child: Container(
+                          margin: EdgeInsets.fromLTRB(30.0, 8.0, 0, 0),
+                          child: Text(
+                            '${widget.arriveTime}',
+                            style: appTextTheme().bodyLarge,
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border(
+                            bottom: BorderSide(
+                              color: gray200,
+                              width: 0.5,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  DpInfo(
-                    backgroundColor: Colors.white,
-                  ),
-                ],
-              )),
-              NextButton(
+                      DpInfo(
+                        backgroundColor: Colors.white,
+                      ),
+                    ],
+                  )),
+              buildButton(
                 title: "탑승 완료",
-                onPressed: () async {
-                  showDialog<void>(
-                    context: context,
-                    barrierDismissible: false, // user must tap button!
-                    builder: (BuildContext context) {
-                      return RectangleDialog(
-                        title: '탑승 완료',
-                        message: '정말로 탑승 완료 버튼을 누르시겠습니까?',
-                        okLabel: '확인',
-                        cancelLabel: '취소',
-                        okPressed: () {
-                          if(widget.carId != null){
-                            FirebaseFirestore.instance
-                              .collection('cars')
-                              .doc(widget.carId)
-                              .update({'status': 'boarding'}).then((_) {
-                            Navigator.of(context).popUntil((route) => route.isFirst);
-                          });
-                          } else if(widget.walkId != null){
-                            FirebaseFirestore.instance
-                                .collection('walks')
-                                .doc(widget.walkId)
-                                .update({'status': 'boarding'}).then((_) {
-                              Navigator.of(context).popUntil((route) => route.isFirst);
-                            });
-                          }
-                        },
-                      );
-                    },
-                  );
-                },
+                dialogTitle: '탑승 완료',
+                dialogMessage: '정말로 탑승 완료 버튼을 누르시겠습니까?',
+                status: 'boarding',
               ),
             ],
           );
@@ -125,4 +98,38 @@ class _VtProgressState extends State<VtProgress> {
       ),
     );
   }
+
+  Widget buildButton({required String title, required String dialogTitle, required String dialogMessage, required String status}) {
+    return NextButton(
+        title: title,
+        onPressed: () {
+          showDialog<void>(
+            context: context,
+            barrierDismissible: false, // user must tap button!
+            builder: (BuildContext context) {
+              return RectangleDialog(
+                title: dialogTitle,
+                message: dialogMessage,
+                okLabel: '확인',
+                cancelLabel: '취소',
+                okPressed: () {
+                  String? docId = widget.carId ?? widget.walkId;
+                  String collection = widget.carId != null ? 'cars' : 'walks';
+                  if (docId != null) {
+                    FirebaseFirestore.instance
+                        .collection(collection)
+                        .doc(docId)
+                        .update({'status': status}).then((_) {
+                      Navigator.of(context)
+                          .popUntil((route) => route.isFirst);
+                    });
+                  }
+                },
+              );
+            },
+          );
+        }
+    );
+  }
 }
+
