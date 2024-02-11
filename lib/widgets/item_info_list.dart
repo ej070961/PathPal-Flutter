@@ -24,21 +24,23 @@ class ItemInfoList extends StatelessWidget {
     }
 
     return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          BuildImage.buildImage(this.imagePath),
-          SizedBox(
-            width: 15,
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width * 0.5, // 화면 너비의 절반을 차지하도록 설정
-            child: Text(
-              '$label : $data',
-              style: appTextTheme().labelSmall,
+      child: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            BuildImage.buildImage(this.imagePath),
+            SizedBox(
+              width: 15,
             ),
-          ),
-        ],
+            Container(
+              width: MediaQuery.of(context).size.width * 0.5, // 화면 너비의 절반을 차지하도록 설정
+              child: Text(
+                '$label : $data',
+                style: appTextTheme().labelSmall,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
