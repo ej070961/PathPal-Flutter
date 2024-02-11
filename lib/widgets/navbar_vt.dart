@@ -69,13 +69,13 @@ class _VtNavBarState extends State<VtNavBar> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(
-                Icons.home
+                Icons.directions_car
             ),
             label: "차량서비스",
           ),
           BottomNavigationBarItem(
             icon: Icon(
-                Icons.contact_support
+                Icons.assist_walker
             ),
             label: "도보서비스",
           ),

@@ -48,7 +48,7 @@ class MyGoogleMap  extends StatelessWidget{
           ),
         ),
         Positioned(
-          bottom: 30,
+          bottom: 45,
           right: 10,
           child: FloatingActionButton(
             foregroundColor: Colors.grey[400],
