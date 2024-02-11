@@ -7,6 +7,8 @@ import 'package:pathpal/models/place.dart';
 import 'package:pathpal/screens/dp/select_place.dart';
 import 'package:pathpal/service/map_service.dart';
 import 'package:pathpal/models/car_state.dart';
+import 'package:pathpal/utils/app_images.dart';
+import 'package:pathpal/widgets/build_image.dart';
 
 class Search extends StatefulWidget {
   const Search({super.key});
@@ -144,7 +146,7 @@ class _SearchState extends State<Search> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(width: 10),
-                      Image.asset('assets/images/circle-icon.png'),
+                      BuildImage.buildImage(AppImages.circleIconImagePath),
                       SizedBox(width: 10),
                       Expanded(
                         // 수정: InputDecorator를 Expanded로 감싸서 폭을 제한
@@ -183,7 +185,7 @@ class _SearchState extends State<Search> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(width: 10),
-                      Image.asset('assets/images/red-circle-icon.png'),
+                        BuildImage.buildImage(AppImages.redCircleIconImagePath),
                       SizedBox(width: 10),
                       Expanded(
                         // 수정: InputDecorator를 Expanded로 감싸서 폭을 제한
@@ -223,7 +225,8 @@ class _SearchState extends State<Search> {
             ),
           ),
           Container(color: background, height: 10,),
-           ListView.builder(
+          Expanded(
+           child: ListView.builder(
             padding: EdgeInsets.zero,
             shrinkWrap: true,
             itemCount: searchResults.length,
@@ -248,6 +251,7 @@ class _SearchState extends State<Search> {
               );
             },
           ),
+          )
         ],
       ),
           

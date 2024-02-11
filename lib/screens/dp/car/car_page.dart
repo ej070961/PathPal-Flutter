@@ -15,6 +15,7 @@ import 'package:pathpal/models/car_state.dart';
 import 'package:pathpal/service/firestore/car_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:location/location.dart';
 
 class CarPage extends StatefulWidget {
   const CarPage({super.key});
@@ -43,29 +44,65 @@ class _CarPage extends State<CarPage> {
   @override
   void initState() {
     super.initState();
-    _center = const LatLng(37.6300, 127.0764);
+    print("initState");
+    if (departureLatLng != null && destinationLatLng != null) {
+      setState(() {
+        _center = departureLatLng;
+      });
+      _onMapCreated(departureLatLng!, destinationLatLng!);
+    }
     CarServiceState().departureAddress ?? _getcurrentLocation();
     CarServiceState().departureTime =
         CarServiceState().departureTime ?? DateTime.now();
   }
 
+  Future<void> _onMapCreated(LatLng departure,
+      LatLng destination) async {
+    final markers = await mapService.createMarkers(departure, destination);
+    final currentLocation = await mapService.getCurrentLocation();
+
+    setState(() {
+      _markers.clear();
+      _markers.addAll(markers);
+      _markers.add(
+        Marker(
+          markerId: MarkerId('myLocation'),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+          alpha: 0.8,
+          position: currentLocation,
+        ),
+      );
+    });
+  }
+
   void _getcurrentLocation() async {
+    print("_getCurrentLocation");
     final currentLatLng= await mapService.getCurrentLocation();
+    print(currentLatLng);
+
+    setState(() {
+      // _center = currentLatLng;
+    
+      CarServiceState().departureLatLng = currentLatLng;
+      _center = CarServiceState().departureLatLng;
+      print('현재 : $_center');
+    });
      // 역지오코딩을 통해 현재 위치의 주소를 가져옵니다.
-    final placemarks = await placemarkFromCoordinates(
-        currentLatLng.latitude, currentLatLng.longitude);
+    final placemarks = await placemarkFromCoordinates(currentLatLng.latitude, currentLatLng.longitude);
 
     if (placemarks.isNotEmpty) {
       final placemark = placemarks.first;
       final address ='${placemark.street}';
       CarServiceState().departureAddress = address; // 현재 위치의 주소를 반환
+      print( CarServiceState().departureAddress);
     } else {
       CarServiceState().departureAddress = '현 위치';
     }
-    setState(() {
-      CarServiceState().departureLatLng = currentLatLng;
-    });
+
+
+
   }
+
 
   void _currentLocation() async {
     final currentLocation = await mapService.getCurrentLocation();
@@ -75,12 +112,18 @@ class _CarPage extends State<CarPage> {
       _markers.add(
         Marker(
           markerId: MarkerId('myLocation'),
-          position: _center!,
+          position: _center!, 
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
           alpha: 0.8,
         ),
       );
     });
+    mapController.animateCamera(CameraUpdate.newCameraPosition(
+      CameraPosition(
+        target: _center!,
+        zoom: 15.0,
+      ),
+    ));
   }
 
   void _goToSearch() {
@@ -91,7 +134,8 @@ class _CarPage extends State<CarPage> {
         ));
   }
 
-  final firebaseService = CarService();
+
+final firebaseService = CarService();
 
   void _submitForm() async {
     print("submitForm");
@@ -106,8 +150,7 @@ class _CarPage extends State<CarPage> {
         dpUid: dpUid,
         status: "waiting");
 
-    firebaseService.saveCarServiceData(car)
-    .then((docId) {
+    firebaseService.saveCarServiceData(car).then((docId) {
       if (docId != null) {
         CarServiceState().resetState();
         Fluttertoast.showToast(
@@ -118,16 +161,16 @@ class _CarPage extends State<CarPage> {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => Container(child: Progress(docId: docId, category: 'car')),
+              builder: (context) =>
+                  Container(child: Progress(docId: docId, category: 'car')),
             ));
       } else {
         // 회원 정보 저장 실패 시 로그인 창으로 이동
         print("저장 실패 오류");
       }
     });
-
-   
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -148,28 +191,28 @@ class _CarPage extends State<CarPage> {
         ),
         body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-            return Column(children: [
-              Expanded(
-                child: MyGoogleMap(
-                  center: _center,
-                  markers: _markers,
-                  onMapCreated: (controller) {
-                    mapController = controller;
-                  },
-                  currentLocationFunction: _currentLocation,
+            return Column(
+              children: [
+                Flexible(
+                  child:  MyGoogleMap(
+                    center: _center,
+                    markers: _markers,
+                    onMapCreated: (controller) {
+                      mapController = controller;
+                    },
+                    currentLocationFunction: _currentLocation,
+                  )    
                 ),
-              ),
               SizedBox(
-                height: constraints.maxHeight * 0.39,
+                height: constraints.maxHeight * 0.35,
                 child: Column(children: [
                   DepartureTimeWidget(departureTime: CarServiceState().departureTime!),
-                  Expanded(
+                 Flexible(
                     child: Padding(
                       padding: EdgeInsets.all(20),
                       child: Column(children: [
                         GestureDetector(
-                          child: Expanded(
-                            child: Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               BuildImage.buildImage(
@@ -185,7 +228,7 @@ class _CarPage extends State<CarPage> {
                                   )
                               )
                             ],
-                            )
+                            
                           ),
                           onTap: () {
                             _goToSearch();
@@ -194,7 +237,6 @@ class _CarPage extends State<CarPage> {
                         SizedBox(height: 5),
                         Divider(color: gray200),
                         GestureDetector(
-                          child: Expanded(
                             child: Row(
                             children: [
                               BuildImage.buildImage(
@@ -207,7 +249,6 @@ class _CarPage extends State<CarPage> {
                                      overflow: TextOverflow.ellipsis,
                                 ))
                             ],
-                          ),
                           ),
                           onTap: () {
                             _goToSearch();

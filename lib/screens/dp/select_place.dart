@@ -70,13 +70,14 @@ class _SelectPlaceState extends State<SelectPlace> {
         WalkServiceState().departureAddress = address;
         Navigator.pop(context);
         Navigator.pop(context);
-        // Navigator.pushNamed(
-        //     context, '/WalkPage');
+        Navigator.pushNamed(
+            context, '/WalkPage');
       }
 
     } else if (widget.label == '목적지') {
       CarServiceState().destinationLatLng = latLng;
       CarServiceState().destinationAddress = address;
+      Navigator.pop(context);
       Navigator.pop(context);
       Navigator.pushReplacementNamed(
           context, '/CarPage');
@@ -85,10 +86,6 @@ class _SelectPlaceState extends State<SelectPlace> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double appBarHeight = AppBar().preferredSize.height;
-    double boxHeight = MediaQuery.of(context).size.height * 0.3;
-    double mapHeight = screenHeight - appBarHeight - boxHeight-24;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -103,38 +100,41 @@ class _SelectPlaceState extends State<SelectPlace> {
           style: Theme.of(context).textTheme.titleLarge,
         ),
       ),
-      body: Column(children: [
-        SizedBox(
-          height: mapHeight,
-          child: MyGoogleMap(
-            center: _center,
-            markers: _markers,
-            onMapCreated: (controller) {
-              mapController = controller;
-            },
-          ),
-        ),
-      SizedBox(
-        height: MediaQuery.of(context).size.height * 0.3,
-        child: Column(
-          children: [
-            DepartureTimeWidget(departureTime: widget.category=='car'? CarServiceState().departureTime!: WalkServiceState().departureTime! ),
+      body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return Column(
+            children: [ 
             Expanded(
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center, // 세로 방향 중앙 정렬
-                  crossAxisAlignment: CrossAxisAlignment.center, // 가로 방향 중앙 정렬
-                  children: [
-                    Text(widget.item.formattedAddress),
-                    Text(widget.item.displayName)
-                  ]
-                  )
+              child: MyGoogleMap(
+                center: _center,
+                markers: _markers,
+                onMapCreated: (controller) {
+                  mapController = controller;
+                },
               ),
-            NextButton(
-              title: '${widget.label}로 설정',
-              onPressed: () => {_updateAddress()})
-          ]),
-        ),
-      ]),
-    );
+            ),
+            SizedBox(
+              height: constraints.maxHeight * 0.35,
+              child: Column(
+                children: [
+                  DepartureTimeWidget(departureTime: widget.category=='car'? CarServiceState().departureTime!: WalkServiceState().departureTime! ),
+                  Expanded(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center, // 세로 방향 중앙 정렬
+                        crossAxisAlignment: CrossAxisAlignment.center, // 가로 방향 중앙 정렬
+                        children: [
+                          Text(widget.item.formattedAddress),
+                          Text(widget.item.displayName)
+                        ]
+                        )
+                    ),
+                  NextButton(
+                    title: '${widget.label}로 설정',
+                    onPressed: () => {_updateAddress()})
+                ]),
+              ),
+            ]);
+        }
+    ));
   }
 }

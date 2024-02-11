@@ -45,14 +45,35 @@ class _WalkPageState extends State<WalkPage> {
   @override
   void initState() {
     super.initState();
-    _center = const LatLng(37.6300, 127.0764);
+    if (departureLatLng != null ) {
+      setState(() {
+        _center = departureLatLng;
+        _markers.clear();
+        _markers.add(
+          Marker(
+            markerId: MarkerId('출발지'),
+            position: _center!,
+            icon:
+                BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+            alpha: 0.8,
+          ),
+        );
+      });
+    }
     WalkServiceState().departureAddress ?? _getcurrentLocation();
     WalkServiceState().departureTime =
         WalkServiceState().departureTime ?? DateTime.now();
   }
 
+
+
   void _getcurrentLocation() async {
     final currentLatLng = await mapService.getCurrentLocation();
+    
+    setState(() {
+      WalkServiceState().departureLatLng = currentLatLng;
+      _center =  WalkServiceState().departureLatLng;
+    });
     // 역지오코딩을 통해 현재 위치의 주소를 가져옵니다.
     final placemarks = await placemarkFromCoordinates(
         currentLatLng.latitude, currentLatLng.longitude);
@@ -62,11 +83,11 @@ class _WalkPageState extends State<WalkPage> {
       final address = '${placemark.street}';
       WalkServiceState().departureAddress = address; // 현재 위치의 주소를 반환
     } else {
-      WalkServiceState().departureAddress = '현 위치';
+      setState(() {
+         WalkServiceState().departureAddress = '현 위치';
+      });
     }
-    setState(() {
-      WalkServiceState().departureLatLng = currentLatLng;
-    });
+
   }
 
   void _currentLocation() async {
@@ -99,6 +120,8 @@ class _WalkPageState extends State<WalkPage> {
     print("submitForm");
     // Firebase에서 현재 사용자의 uid 가져오기
     final dpUid = FirebaseAuth.instance.currentUser!.uid;
+    //디버그용
+    // const dpUid = "vX4hHeFUvBPJJ03p6vFP9ItEsdy1";
     WalkModel walk = WalkModel(
         departureAddress: WalkServiceState().departureAddress,
         departureLatLng: WalkServiceState().departureLatLng,
@@ -152,7 +175,7 @@ class _WalkPageState extends State<WalkPage> {
           builder: (BuildContext context, BoxConstraints constraints) {
             return Column (
               children: [
-                Expanded(
+                Flexible(
                   child: MyGoogleMap(
                     center: _center,
                     markers: _markers,
@@ -163,11 +186,11 @@ class _WalkPageState extends State<WalkPage> {
                   ),
                 ),
                 SizedBox(
-                  height: constraints.maxHeight * 0.4,
+                  height: constraints.maxHeight * 0.32,
                   child: Column(
                     children: [
                       DepartureTimeWidget(departureTime: WalkServiceState().departureTime!),
-                      Expanded(
+                      Flexible(
                         child: Padding(
                           padding: EdgeInsets.all(15),
                           child: Column(

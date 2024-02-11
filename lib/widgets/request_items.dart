@@ -21,7 +21,8 @@ class _RequestItemsState extends State<RequestItems> {
 
   //현재 로그인 중인 사용자 id 가져오기
   final dpUid = FirebaseAuth.instance.currentUser!.uid;
-
+  //디버그용
+  // final dpUid = "vX4hHeFUvBPJJ03p6vFP9ItEsdy1";
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(

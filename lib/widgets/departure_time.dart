@@ -6,7 +6,7 @@ import 'package:pathpal/widgets/modal_bottom_sheet.dart';
 import 'package:pathpal/models/car_state.dart';
 
 class DepartureTimeWidget extends StatefulWidget {
-  late DateTime departureTime;
+  DateTime departureTime;
 
   DepartureTimeWidget(
     {required this.departureTime,
@@ -19,7 +19,7 @@ class DepartureTimeWidget extends StatefulWidget {
 }
 
 class _DepartureTimeWidgetState extends State<DepartureTimeWidget> {
-  late String formattedDateTime;
+  String? formattedDateTime;
 
   @override
   void initState() {
