@@ -65,7 +65,7 @@ class _WalkMainState extends State<WalkMain> {
 
   void _onMarkerTapped(DocumentSnapshot walk) {
     Set<Marker> markers = new Set();
-    Marker? selectedMarker = _markers.firstWhere((marker) => marker.markerId.value == walk['dp_uid']);
+    Marker? selectedMarker = _markers.firstWhere((marker) => marker.markerId.value == walk['departure_address']);
     markers.add(selectedMarker);
 
     String departureAddress = walk['departure_address'];
@@ -185,7 +185,7 @@ class _WalkMainState extends State<WalkMain> {
         LatLng location = LatLng(geoPoint.latitude, geoPoint.longitude);
         _markers.add(
           Marker(
-            markerId: MarkerId(data['dp_uid']),
+            markerId: MarkerId(data['departure_address']),
             position: location,
             icon: BitmapDescriptor.defaultMarker,
             onTap: () {
