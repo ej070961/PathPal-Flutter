@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pathpal/colors.dart';
-import 'package:pathpal/screens/dp/chatbot.dart';
-import 'package:pathpal/screens/dp/home.dart';
 import 'package:pathpal/screens/dp/my.dart';
 import 'package:pathpal/screens/vt/car_main.dart';
 import 'package:pathpal/screens/vt/walk_main.dart';
@@ -21,7 +19,7 @@ class _VtNavBarState extends State<VtNavBar> {
   final firebaseService = UserService(); // UserService 인스턴스 생성
   Volunteer? volunteer;
 
-  int selectedIndex = 0;
+  int selectedIndex = 1;
 
   void _onItemTapped(int index) {
     if (index == 0 && (volunteer?.carNumber == null)) {
@@ -37,13 +35,10 @@ class _VtNavBarState extends State<VtNavBar> {
     }
   }
 
-
   @override
   void initState() {
     super.initState();
     _loadVolunteerData();
-
-
   }
 
   Future<void> _loadVolunteerData() async {
@@ -69,7 +64,6 @@ class _VtNavBarState extends State<VtNavBar> {
           ],
         ) ,
       ),
-
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         items: const <BottomNavigationBarItem>[
@@ -96,7 +90,6 @@ class _VtNavBarState extends State<VtNavBar> {
         selectedItemColor: mainAccentColor,
         onTap: _onItemTapped,
       ),
-
     );
 
   }
