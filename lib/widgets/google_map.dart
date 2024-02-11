@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class MyGoogleMap  extends StatelessWidget{
+class MyGoogleMap  extends StatefulWidget{
   final LatLng? center;
   final Set<Marker> markers;
   final Function? onMapCreated;
@@ -17,26 +17,49 @@ class MyGoogleMap  extends StatelessWidget{
     this.onTap
   }) : super(key: key);
 
+    @override
+  _MyGoogleMapState createState() => _MyGoogleMapState();
+
+}
+
+class _MyGoogleMapState extends State<MyGoogleMap> {
+  LatLng? center;
+
+  @override
+  void initState() {
+    super.initState();
+    center = widget.center;
+  }
+
+  @override
+  void didUpdateWidget(covariant MyGoogleMap oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    print("update");
+    center = widget.center;
+    print(center);
+  }
+
   @override
   Widget build(BuildContext context) {
 
     if (center == null) {
-      // center 값이 null인 경우에는 CircularProgressIndicator를 반환
-      return CircularProgressIndicator();
+      // center 값이 null인 경우에는 CircularProgressIndicator를 반환    
+      return  Center(child: CircularProgressIndicator());
     }
+
 
     return Stack(
       children: [
         GestureDetector(
           onTap: () {
-            if (onTap != null) {
-              onTap!();
+            if (widget.onTap != null) {
+              widget.onTap!();
             }
           },
           child: GoogleMap(
             onMapCreated: (controller) {
-              if (onMapCreated != null) {
-                onMapCreated!(controller);
+              if (widget.onMapCreated != null) {
+                widget.onMapCreated!(controller);
               }
             },
             zoomControlsEnabled: false,
@@ -44,7 +67,7 @@ class MyGoogleMap  extends StatelessWidget{
               target: center!,
               zoom: 13.0,
             ),
-            markers: markers,
+            markers: widget.markers,
           ),
         ),
         Positioned(
@@ -54,8 +77,8 @@ class MyGoogleMap  extends StatelessWidget{
             foregroundColor: Colors.grey[400],
             backgroundColor: Colors.white,
             onPressed: () {
-              if (currentLocationFunction != null) {
-                currentLocationFunction!();
+              if (widget.currentLocationFunction != null) {
+                widget.currentLocationFunction!();
               }
             },
             shape: RoundedRectangleBorder(

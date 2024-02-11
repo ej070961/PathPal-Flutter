@@ -17,6 +17,12 @@ class ProgressAppBar extends StatelessWidget implements PreferredSizeWidget{
         ),
       ),
       child: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.close),
+          onPressed: () {
+            Navigator.pop(context); // 뒤로 가기 아이콘을 누르면 현재 창을 닫음
+          },
+        ),
         automaticallyImplyLeading: false,
         centerTitle: true,
         title: Text(
