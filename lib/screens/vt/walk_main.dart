@@ -94,8 +94,6 @@ class _WalkMainState extends State<WalkMain> {
     super.initState();
 
     _currentLocation(); // 현재 위치 마커를 불러옵니다.
-
-    // fetchWalksData();
   }
 
   void _onMarkerTapped(DocumentSnapshot walk) {
@@ -207,43 +205,5 @@ class _WalkMainState extends State<WalkMain> {
       ),
     ));
   }
-  // Future<void> fetchWalksData() async {
-    //   StreamBuilder<QuerySnapshot>(
-    //       stream: FirebaseFirestore.instance.collection('walks').where('status', isEqualTo: 'waiting').snapshots(),
-    //       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-    //         if (snapshot.hasError) {
-    //           return Text('Something went wrong');
-    //         }
-    //
-    //         if (snapshot.connectionState == ConnectionState.waiting) {
-    //           return Text("Loading");
-    //         }
-    //         snapshot.data?.docs.forEach((doc) {
-    //           Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
-    //           if (data != null) {
-    //             // data가 null인지 확인
-    //             GeoPoint geoPoint = data['departure_latlng'];
-    //             LatLng location = LatLng(geoPoint.latitude, geoPoint.longitude);
-    //             _markers.add(
-    //               Marker(
-    //                 markerId: MarkerId(data['departure_address']),
-    //                 position: location,
-    //                 icon: BitmapDescriptor.defaultMarker,
-    //                 onTap: () {
-    //                   //walk 마커 정보를 줘야됨
-    //                   if (isMarkerMain == true) {
-    //                     _onMarkerTapped(doc);
-    //                   }
-    //                 },
-    //               ),
-    //             );
-    //           }
-    //         });
-    //
-    //       }
-    //
-    //
-    //   );
-    // }
-  //
+
 }
