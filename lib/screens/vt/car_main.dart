@@ -215,16 +215,14 @@ class _CarMainState extends State<CarMain> {
               onTap: () {
                 setState(() {
                   if (_selectedItemIndex != null) {
-                    // 이전에 선택된 아이템이 있으면
-                    _isImageVisibleList[_selectedItemIndex!] =
-                        false; // 이전에 선택된 아이템의 이미지를 숨김
+                    _isImageVisibleList[_selectedItemIndex!] = false;
                   }
                   _selectedItemIndex = index;
                   _isImageVisibleList[index] = true;
                 });
-                _onMapCreated(
-                    mapController, items[index]['출발지']!, items[index]['도착지']!);
+                _onMapCreated(mapController, car);
               },
+
             ),
           );
         });
@@ -253,9 +251,16 @@ class _CarMainState extends State<CarMain> {
     ));
   }
 
-  Future<void> _onMapCreated(GoogleMapController controller, LatLng departure,
-      LatLng destination) async {
+  Future<void> _onMapCreated(GoogleMapController controller, DocumentSnapshot car) async {
     mapController = controller;
+
+    // Firestore에서 위도와 경도를 가져옵니다.
+    GeoPoint departureGeoPoint = car['departure_latlng'];
+    GeoPoint destinationGeoPoint = car['destination_latlng'];
+
+    // GeoPoint를 LatLng으로 변환합니다.
+    LatLng departure = LatLng(departureGeoPoint.latitude, departureGeoPoint.longitude);
+    LatLng destination = LatLng(destinationGeoPoint.latitude, destinationGeoPoint.longitude);
 
     final markers = await mapService.createMarkers(departure, destination);
     final currentLocation = await mapService.getCurrentLocation();
@@ -275,6 +280,7 @@ class _CarMainState extends State<CarMain> {
 
     mapService.moveCamera(controller, departure, destination);
   }
+
 
   Future<void> checkDocumentExists(DocumentSnapshot car) async {
     final docSnapshot = await FirebaseFirestore.instance
