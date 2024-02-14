@@ -145,7 +145,7 @@ class _WalkPageState extends State<WalkPage> {
           gravity: ToastGravity.BOTTOM,
           toastLength: Toast.LENGTH_SHORT,
         );
-        Navigator.push(
+        Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => Container(child: Progress(docId: docId, category: 'walk',)),
