@@ -22,7 +22,7 @@ if api_key is None:
 embedding_function = OpenAIEmbeddings()
 
 # 문서 로드 및 ChromaDB 설정
-file_paths = ["/Users/junseok/Documents/pathpal_server/승강기 위치정보.csv", "/Users/junseok/Documents/pathpal_server/장애인화장실위치.csv"]
+file_paths = ["/Users/changha/Documents/24-1-quarter/PathPal-Flutter/chatbot_server/승강기 위치정보.csv", "/Users/changha/Documents/24-1-quarter/PathPal-Flutter/chatbot_server/장애인화장실위치.csv"]
 documents = []
 for file_path in file_paths:
     loader = CSVLoader(file_path, encoding="CP949")  # 인코딩은 파일에 맞게 조정

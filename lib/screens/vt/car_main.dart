@@ -6,6 +6,7 @@ import 'package:pathpal/screens/vt/car_detail.dart';
 import 'package:pathpal/service/map_service.dart';
 import 'package:pathpal/theme.dart';
 import 'package:pathpal/widgets/appBar.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../colors.dart';
 import '../../utils/app_images.dart';
@@ -121,7 +122,7 @@ class _CarMainState extends State<CarMain> {
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return CircularProgressIndicator();
+            return Center(child: CircularProgressIndicator());
           }
           var doc = snapshot.data!;
           GeoPoint latlng = car['departure_latlng'];
@@ -278,7 +279,22 @@ class _CarMainState extends State<CarMain> {
       );
     });
 
-    mapService.moveCamera(controller, departure, destination);
+    // mapService.moveCamera(controller, departure, destination);
+    _updateCameraPosition(departure, destination);
+  }
+
+  void _updateCameraPosition(LatLng departure, LatLng destination) async {
+    // 두 위치를 포함하는 영역을 계산합니다.
+    LatLngBounds bounds;
+    if (departure.latitude > destination.latitude && departure.longitude > destination.longitude) {
+      bounds = LatLngBounds(southwest: destination, northeast: departure);
+    } else {
+      bounds = LatLngBounds(southwest: departure, northeast: destination);
+    }
+
+    // 카메라를 해당 영역에 맞춥니다.
+    CameraUpdate cameraUpdate = CameraUpdate.newLatLngBounds(bounds, 50);
+    mapController.animateCamera(cameraUpdate);
   }
 
 
