@@ -21,7 +21,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
         centerTitle: true,
         title: Text(
           "마이페이지",
-          style: appTextTheme().titleMedium,
+          style: appTextTheme().titleLarge,
         ),
       ),
     );

@@ -80,8 +80,14 @@ class _WalkPageState extends State<WalkPage> {
 
     if (placemarks.isNotEmpty) {
       final placemark = placemarks.first;
-      final address = '${placemark.street}';
-      WalkServiceState().departureAddress = address; // 현재 위치의 주소를 반환
+      final address = '${placemark.street}'; //주소가 너무 길 경우
+      List<String> addressParts = address.split(' ');
+      if (addressParts.length > 2) {
+        addressParts.removeRange(0, 1); // 나라 이름 제거
+      }
+      setState(() {
+        WalkServiceState().departureAddress = addressParts.join(' '); // 현재 위치의 주소를 반환
+      });
     } else {
       setState(() {
          WalkServiceState().departureAddress = '현 위치';

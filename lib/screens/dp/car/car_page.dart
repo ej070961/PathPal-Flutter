@@ -56,8 +56,7 @@ class _CarPage extends State<CarPage> {
         CarServiceState().departureTime ?? DateTime.now();
   }
 
-  Future<void> _onMapCreated(LatLng departure,
-      LatLng destination) async {
+  Future<void> _onMapCreated(LatLng departure, LatLng destination) async {
     final markers = await mapService.createMarkers(departure, destination);
     final currentLocation = await mapService.getCurrentLocation();
 
@@ -77,32 +76,37 @@ class _CarPage extends State<CarPage> {
 
   void _getcurrentLocation() async {
     print("_getCurrentLocation");
-    final currentLatLng= await mapService.getCurrentLocation();
+    final currentLatLng = await mapService.getCurrentLocation();
     print(currentLatLng);
 
     setState(() {
-      // _center = currentLatLng;
-    
       CarServiceState().departureLatLng = currentLatLng;
       _center = CarServiceState().departureLatLng;
       print('현재 : $_center');
     });
-     // 역지오코딩을 통해 현재 위치의 주소를 가져옵니다.
-    final placemarks = await placemarkFromCoordinates(currentLatLng.latitude, currentLatLng.longitude);
+    // 역지오코딩을 통해 현재 위치의 주소를 가져옵니다.
+    final placemarks = await placemarkFromCoordinates(
+        currentLatLng.latitude, currentLatLng.longitude);
 
     if (placemarks.isNotEmpty) {
       final placemark = placemarks.first;
-      final address ='${placemark.street}';
-      CarServiceState().departureAddress = address; // 현재 위치의 주소를 반환
-      print( CarServiceState().departureAddress);
+      final address = '${placemark.street}';
+      //주소가 너무 길 경우
+      List<String> addressParts = address.split(' ');
+      if (addressParts.length > 2) {
+        addressParts.removeRange(0, 1); // 나라 이름 제거
+      }
+      setState(() {
+          CarServiceState().departureAddress = addressParts.join(' '); // 현재 위치의 주소를 반환
+      });
+ 
+      print(CarServiceState().departureAddress);
     } else {
-      CarServiceState().departureAddress = '현 위치';
+      setState(() {
+        CarServiceState().departureAddress = '현 위치';
+      });
     }
-
-
-
   }
-
 
   void _currentLocation() async {
     final currentLocation = await mapService.getCurrentLocation();
@@ -112,7 +116,7 @@ class _CarPage extends State<CarPage> {
       _markers.add(
         Marker(
           markerId: MarkerId('myLocation'),
-          position: _center!, 
+          position: _center!,
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
           alpha: 0.8,
         ),
@@ -134,8 +138,7 @@ class _CarPage extends State<CarPage> {
         ));
   }
 
-
-final firebaseService = CarService();
+  final firebaseService = CarService();
 
   void _submitForm() async {
     print("submitForm");
@@ -171,7 +174,6 @@ final firebaseService = CarService();
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -191,23 +193,22 @@ final firebaseService = CarService();
         ),
         body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-            return Column(
-              children: [
-                Flexible(
-                  child:  MyGoogleMap(
-                    center: _center,
-                    markers: _markers,
-                    onMapCreated: (controller) {
-                      mapController = controller;
-                    },
-                    currentLocationFunction: _currentLocation,
-                  )    
-                ),
+            return Column(children: [
+              Flexible(
+                  child: MyGoogleMap(
+                center: _center,
+                markers: _markers,
+                onMapCreated: (controller) {
+                  mapController = controller;
+                },
+                currentLocationFunction: _currentLocation,
+              )),
               SizedBox(
                 height: constraints.maxHeight * 0.35,
                 child: Column(children: [
-                  DepartureTimeWidget(departureTime: CarServiceState().departureTime!),
-                 Flexible(
+                  DepartureTimeWidget(
+                      departureTime: CarServiceState().departureTime!),
+                  Flexible(
                     child: Padding(
                       padding: EdgeInsets.all(20),
                       child: Column(children: [
@@ -223,12 +224,10 @@ final firebaseService = CarService();
                               ),
                               Flexible(
                                   child: Text(
-                                    CarServiceState().departureAddress ?? '',
-                                    overflow: TextOverflow.ellipsis,
-                                  )
-                              )
+                                CarServiceState().departureAddress ?? '',
+                                overflow: TextOverflow.ellipsis,
+                              ))
                             ],
-                            
                           ),
                           onTap: () {
                             _goToSearch();
@@ -237,17 +236,17 @@ final firebaseService = CarService();
                         SizedBox(height: 5),
                         Divider(color: gray200),
                         GestureDetector(
-                            child: Row(
+                          child: Row(
                             children: [
                               BuildImage.buildImage(
-                                    AppImages.redCircleIconImagePath),
+                                  AppImages.redCircleIconImagePath),
                               SizedBox(width: 10),
                               Text("목적지 : "),
                               Flexible(
                                   child: Text(
-                                    CarServiceState().destinationAddress?? ' ',
-                                     overflow: TextOverflow.ellipsis,
-                                ))
+                                CarServiceState().destinationAddress ?? ' ',
+                                overflow: TextOverflow.ellipsis,
+                              ))
                             ],
                           ),
                           onTap: () {
@@ -270,6 +269,5 @@ final firebaseService = CarService();
             ]);
           },
         ));
-        
-}
+  }
 }
