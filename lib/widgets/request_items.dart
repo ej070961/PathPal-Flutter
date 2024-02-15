@@ -18,7 +18,6 @@ class RequestItems extends StatefulWidget {
 }
 
 class _RequestItemsState extends State<RequestItems> {
-
   //현재 로그인 중인 사용자 id 가져오기
   final dpUid = FirebaseAuth.instance.currentUser!.uid;
   //디버그용
@@ -26,17 +25,15 @@ class _RequestItemsState extends State<RequestItems> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        stream:
-            FirebaseFirestore.instance
+        stream: FirebaseFirestore.instance
             .collection(widget.category == 'car' ? 'cars' : 'walks')
-            .where('dp_uid', isEqualTo: dpUid) 
+            .where('dp_uid', isEqualTo: dpUid)
             .orderBy('departure_time', descending: true) // 출발 시간에 따라 최신순으로 정렬
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(
-              child: CircularProgressIndicator()
-            ); // 데이터가 로딩 중일 때 보여줄 위젯
+                child: CircularProgressIndicator()); // 데이터가 로딩 중일 때 보여줄 위젯
           }
           return ListView.builder(
             itemCount: snapshot.data?.docs.length ?? 0,
@@ -55,65 +52,61 @@ class _RequestItemsState extends State<RequestItems> {
                 'boarding': "미팅완료",
               };
               // Timestamp를 DateTime으로 변환
-              DateTime departureTime = (item['departure_time'] as Timestamp).toDate();
+              DateTime departureTime =
+                  (item['departure_time'] as Timestamp).toDate();
               // DateTime을 원하는 형식으로 포맷팅
               String formattedDepartureTime =
                   DateFormat('MM월 dd일 (E)').format(departureTime);
 
-              return Column(
-                children: [
-                  SizedBox(height: 15),
-                  item['status'] != 'boarding'
-                  ? _buildNotBoardingItem(
-                    widget.category=='car'? statusCarMap[item['status']]!: statusWalkMap[item['status']]!,
-                    formattedDepartureTime,
-                    item,
-                    context,
-                    widget.category
-                  )
-                  : _buildBoardingItem(
-                     widget.category == 'car'
+              return Column(children: [
+                SizedBox(height: 15),
+                item['status'] != 'boarding'
+                    ? _buildNotBoardingItem(
+                        widget.category == 'car'
                             ? statusCarMap[item['status']]!
                             : statusWalkMap[item['status']]!,
                         formattedDepartureTime,
                         item,
-                        widget.category
-                     
-                  )
-              
+                        context,
+                        widget.category)
+                    : _buildBoardingItem(
+                        widget.category == 'car'
+                            ? statusCarMap[item['status']]!
+                            : statusWalkMap[item['status']]!,
+                        formattedDepartureTime,
+                        item,
+                        widget.category)
               ]);
-              
             },
           );
         });
   }
 }
 
-Widget _buildNotBoardingItem(String status, String formattedDepartureTime, DocumentSnapshot data, BuildContext context, String category) {
-
-  return Container(
-     color: Colors.white,
-        width: double.infinity,
-        height: 150,
-        child: Column(
-          children: [
+Widget _buildNotBoardingItem(String status, String formattedDepartureTime,
+    DocumentSnapshot data, BuildContext context, String category) {
+  return  Container(
+          color: Colors.white,
+          width: double.infinity,
+          height: 150,
+          child: Column(children: [
             Container(
-              width: double.infinity,
-              height: 100,
-              padding: EdgeInsets.fromLTRB(25, 20, 10, 0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                width: double.infinity,
+                height: 100,
+                padding: EdgeInsets.fromLTRB(25, 20, 10, 0),
+                child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        formattedDepartureTime,
-                        style: appTextTheme().bodyMedium,
-                      ),
-                      Container(
+                      Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              formattedDepartureTime,
+                              style: appTextTheme().bodyMedium,
+                            ),
+                            Container(
                               height: 24,
                               decoration: BoxDecoration(
                                   color: paleAccentColor,
@@ -130,143 +123,141 @@ Widget _buildNotBoardingItem(String status, String formattedDepartureTime, Docum
                                 ),
                               ),
                             ),
-                    ]),
-                    SizedBox(height: 10),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        BuildImage.buildImage(AppImages.circleIconImagePath),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        Text(
-                            data['departure_address'],
-                            style: appTextTheme().bodySmall,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                      ]
-                    ),
-                    category == 'car'
-                    ? Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
+                          ]),
+                      SizedBox(height: 10),
+                      Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
                             BuildImage.buildImage(
-                                AppImages.redCircleIconImagePath),
+                                AppImages.circleIconImagePath),
                             SizedBox(
                               width: 15,
                             ),
                             Text(
-                              data['destination_address'],
+                              data['departure_address'],
                               style: appTextTheme().bodySmall,
                               overflow: TextOverflow.ellipsis,
                             ),
-                          ])
-                    : Container()
-                  ])
-            ),
+                          ]),
+                      category == 'car'
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                              BuildImage.buildImage(
+                                  AppImages.redCircleIconImagePath),
+                              SizedBox(
+                                width: 15,
+                              ),
+                              Text(
+                                data['destination_address'] ?? '',
+                                style: appTextTheme().bodySmall,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ])
+                      : Container()
+                    ])),
             TextButton(
-              onPressed: ()=> Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Progress(docId: data.id, category: category)),
-              ), 
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end, // 여기를 수정했습니다.
-                children: [
-                  Text(
-                    "진행상태 보기",
-                    style: appTextTheme().bodyMedium!.copyWith(color: mainAccentColor),
-                  ),
-                  Icon(
-                    Icons.chevron_right,
-                    color: mainAccentColor,
-                  )
-              ])
-            )
-      ])
-    );
+                onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              Progress(docId: data.id, category: category)),
+                    ),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end, // 여기를 수정했습니다.
+                    children: [
+                      Text(
+                        "진행상태 보기",
+                        style: appTextTheme()
+                            .bodyMedium!
+                            .copyWith(color: mainAccentColor),
+                      ),
+                      Icon(
+                        Icons.chevron_right,
+                        color: mainAccentColor,
+                      )
+                    ]))
+          ]));
 }
 
-Widget _buildBoardingItem(String status, String formattedDepartureTime, DocumentSnapshot data, String category) {
+Widget _buildBoardingItem(String status, String formattedDepartureTime,
+    DocumentSnapshot data, String category) {
   print("buildBoarding item");
 
   return Container(
-        color: Colors.white,
-        width: double.infinity,
-        height: 200,
-        child: Column(
-          children: [
-            Container(
-              width: double.infinity,
-              height: 105,
-              padding: EdgeInsets.fromLTRB(25, 20, 10, 10),
-              child: Column(
+      color: Colors.white,
+      width: double.infinity,
+      height: 200,
+      child: Column(children: [
+        Container(
+            width: double.infinity,
+            height: 105,
+            padding: EdgeInsets.fromLTRB(25, 20, 10, 10),
+            child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        formattedDepartureTime,
-                        style: appTextTheme().bodyMedium,
-                      ),
-                      Container(
-                              height: 24,
-                              decoration: BoxDecoration(
-                                  color: paleAccentColor,
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 5), // 원하는 패딩을 추가
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    status,
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          formattedDepartureTime,
+                          style: appTextTheme().bodyMedium,
+                        ),
+                        Container(
+                          height: 24,
+                          decoration: BoxDecoration(
+                              color: paleAccentColor,
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 5), // 원하는 패딩을 추가
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                status,
+                                style: TextStyle(color: Colors.white),
                               ),
                             ),
-                    ]),
-                    SizedBox(height: 10),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        BuildImage.buildImage(AppImages.circleIconImagePath),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        Text(
-                            data['departure_address'],
-                            style: appTextTheme().bodySmall,
-                            overflow: TextOverflow.ellipsis,
                           ),
-                      ]
-                    ),
-                    category == 'car'
-                    ? Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                            BuildImage.buildImage(
-                                AppImages.redCircleIconImagePath),
-                            SizedBox(
-                              width: 15,
-                            ),
-                            Text(
-                              data['destination_address'],
-                              style: appTextTheme().bodySmall,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ])
-                    : Container()
-                  ])
-            ),
-            Divider(height: 1, color: gray100),
-            StreamBuilder<DocumentSnapshot>(
+                        ),
+                      ]),
+                  SizedBox(height: 10),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center, 
+                    children: [
+                      BuildImage.buildImage(AppImages.circleIconImagePath),
+                      SizedBox(
+                        width: 15,
+                      ),
+                      Text(
+                        data['departure_address'],
+                        style: appTextTheme().bodySmall,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                  ]),
+                  category == 'car'
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                              BuildImage.buildImage(
+                                  AppImages.redCircleIconImagePath),
+                              SizedBox(
+                                width: 15,
+                              ),
+                              Text(
+                                data['destination_address'] ?? '',
+                                style: appTextTheme().bodySmall,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ])
+                      : Container()
+                ])),
+        Divider(height: 1, color: gray100),
+        StreamBuilder<DocumentSnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('volunteers')
                 .doc(data['vt_uid'])
@@ -281,63 +272,95 @@ Widget _buildBoardingItem(String status, String formattedDepartureTime, Document
                   color: Colors.white,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      //프로필 이미지 원형으로 표시하기
-                      SizedBox(
-                        width: 50,
-                        height: 50,
-                        child: ClipOval(
-                          child: BuildImage.buildProfileImage(
-                              vtData['profileUrl']),
-                        ),
-                      ),
-                      SizedBox(width: 15),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            vtData['name'],
-                            style: appTextTheme().bodyMedium,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        //프로필 이미지 원형으로 표시하기
+                        SizedBox(
+                          width: 52,
+                          height: 52,
+                          child: ClipOval(
+                            child: BuildImage.buildProfileImage(
+                                vtData['profileUrl']),
                           ),
-                          category == 'car'
-                              ? Text(
-                                  vtData['carNumber'],
-                                  style: appTextTheme()
-                                      .labelSmall!
-                                      .copyWith(color: subAccentColor),
-                                )
-                              : Container(),
-                          Row(
-                            children: [
-                              Text("내 평가"),
-                              SizedBox(width: 5),
+                        ),
+                        SizedBox(width: 15),
+                        //봉사자 정보
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                              Text(
+                                vtData['name'],
+                                style: appTextTheme().bodyMedium,
+                              ),
+                              category == 'car'
+                                  ? Text(
+                                      vtData['carNumber'],
+                                      style: appTextTheme()
+                                          .labelSmall!
+                                          .copyWith(color: subAccentColor),
+                                    )
+                                  : SizedBox.shrink(),
+                              //리뷰
                               StreamBuilder<QuerySnapshot>(
-                                stream: FirebaseFirestore.instance
-                                    .collection('reviews')
-                                    .where('req_id', isEqualTo: data.id) 
-                                    .snapshots(),
-                                builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return CircularProgressIndicator(); // 데이터가 로딩 중일 때 보여줄 위젯
+                                  stream: FirebaseFirestore.instance
+                                      .collection('reviews')
+                                      .where('req_id', isEqualTo: data.id)
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    if(!snapshot.hasData){
+                                      return SizedBox.shrink();
                                     }
-
-                                    if (snapshot.hasError) {
-                                      return Text(
-                                          "Error: ${snapshot.error}");
+                                    if (snapshot.data!.docs.isEmpty) {
+                                      //아직 리뷰 작성되지 않음
+                                      return GestureDetector(
+                                          onTap: () => Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Progress(
+                                                            docId: data.id,
+                                                            category:
+                                                                category)),
+                                              ),
+                                          child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .start, // 여기를 수정했습니다.
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "리뷰 작성하기",
+                                                  style: appTextTheme()
+                                                      .bodyMedium!
+                                                      .copyWith(
+                                                          color:
+                                                              mainAccentColor),
+                                                ),
+                                                Icon(
+                                                  Icons.chevron_right,
+                                                  color: mainAccentColor,
+                                                )
+                                              ]));
                                     }
+                                    print(snapshot.hasData);
+                                    DocumentSnapshot item =
+                                        snapshot.data!.docs.first;
 
-                                    DocumentSnapshot item = snapshot.data!.docs.first;
-
-                                    return RatingBar.builder(
-                                        initialRating: item['rating'], // DocumentSnapshot에서 가져온 평점
+                                    return Row(children: [
+                                      Text("내 평가"),
+                                      SizedBox(width: 5),
+                                      RatingBar.builder(
+                                        initialRating: item[
+                                            'rating'], // DocumentSnapshot에서 가져온 평점
                                         minRating: 1,
                                         direction: Axis.horizontal,
                                         allowHalfRating: true,
                                         itemCount: 5,
                                         itemSize: 20.0,
-                                        itemPadding: EdgeInsets.symmetric(horizontal: 0.7),
+                                        itemPadding: EdgeInsets.symmetric(
+                                            horizontal: 0.7),
                                         itemBuilder: (context, _) => Icon(
                                           Icons.star,
                                           color: mainAccentColor,
@@ -345,18 +368,14 @@ Widget _buildBoardingItem(String status, String formattedDepartureTime, Document
                                         onRatingUpdate: (rating) {
                                           print(rating);
                                         },
-                                        ignoreGestures: true, // 사용자의 터치를 무시하려면 true로 설정
-                                      );
-
-                                })
-                              
-
-                          ])
-                        ])
-                    ]),      
-        );
-      })
-       ])
-  );
- 
-  }
+                                        ignoreGestures:
+                                            true, // 사용자의 터치를 무시하려면 true로 설정
+                                      )
+                                    ]);
+                                  })
+                            ])
+                        
+                      ]));
+            })
+      ]));
+}
