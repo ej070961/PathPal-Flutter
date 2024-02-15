@@ -199,6 +199,8 @@ class _WalkMainState extends State<WalkMain> {
     );
   }
 
+
+
   void _currentLocation() async {
     final currentLocation = await mapService.getCurrentLocation();
 

@@ -278,7 +278,22 @@ class _CarMainState extends State<CarMain> {
       );
     });
 
-    mapService.moveCamera(controller, departure, destination);
+    // mapService.moveCamera(controller, departure, destination);
+    _updateCameraPosition(departure, destination);
+  }
+
+  void _updateCameraPosition(LatLng departure, LatLng destination) async {
+    // 두 위치를 포함하는 영역을 계산합니다.
+    LatLngBounds bounds;
+    if (departure.latitude > destination.latitude && departure.longitude > destination.longitude) {
+      bounds = LatLngBounds(southwest: destination, northeast: departure);
+    } else {
+      bounds = LatLngBounds(southwest: departure, northeast: destination);
+    }
+
+    // 카메라를 해당 영역에 맞춥니다.
+    CameraUpdate cameraUpdate = CameraUpdate.newLatLngBounds(bounds, 50);
+    mapController.animateCamera(cameraUpdate);
   }
 
 
