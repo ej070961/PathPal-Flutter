@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pathpal/theme.dart';
 import 'langchain.dart';
 
 class ChatBotPage extends StatefulWidget {
@@ -47,7 +48,11 @@ class _ChatBotPageState extends State<ChatBotPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('챗봇 서비스'),
+        centerTitle: true,
+        title: Text(
+          "챗봇서비스",
+          style: appTextTheme().titleLarge,
+        ),
         actions: <Widget>[
           if (_isLoading)
             CircularProgressIndicator(
