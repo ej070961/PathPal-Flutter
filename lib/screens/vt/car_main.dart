@@ -122,7 +122,7 @@ class _CarMainState extends State<CarMain> {
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return CircularProgressIndicator();
+            return Center(child: CircularProgressIndicator());
           }
           var doc = snapshot.data!;
           GeoPoint latlng = car['departure_latlng'];
