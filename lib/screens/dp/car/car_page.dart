@@ -161,7 +161,7 @@ class _CarPage extends State<CarPage> {
           gravity: ToastGravity.BOTTOM,
           toastLength: Toast.LENGTH_SHORT,
         );
-        Navigator.push(
+        Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) =>
