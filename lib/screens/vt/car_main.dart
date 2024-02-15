@@ -6,6 +6,7 @@ import 'package:pathpal/screens/vt/car_detail.dart';
 import 'package:pathpal/service/map_service.dart';
 import 'package:pathpal/theme.dart';
 import 'package:pathpal/widgets/appBar.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../colors.dart';
 import '../../utils/app_images.dart';
