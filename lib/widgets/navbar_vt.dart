@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pathpal/colors.dart';
 import 'package:pathpal/screens/dp/my.dart';
 import 'package:pathpal/screens/vt/car_main.dart';
+import 'package:pathpal/screens/vt/mypage.dart';
 import 'package:pathpal/screens/vt/walk_main.dart';
 
 import '../models/volunteer.dart';
@@ -60,7 +61,7 @@ class _VtNavBarState extends State<VtNavBar> {
           children: [
             CarMain(vtUid: widget.vtUid),
             WalkMain(),
-            MyPage()
+            VtMyPage()
           ],
         ) ,
       ),
