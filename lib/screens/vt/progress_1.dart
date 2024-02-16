@@ -21,18 +21,23 @@ class VtProgress extends StatefulWidget {
   String? arriveTime = "";
   String? carId;
   String? walkId;
+  bool isWalkService;
 
-  VtProgress({this.arriveTime, this.carId, this.walkId});
+  VtProgress({this.arriveTime, this.carId, this.walkId, required this.isWalkService});
 
   @override
   State<VtProgress> createState() => _VtProgressState();
 }
 
 class _VtProgressState extends State<VtProgress> {
+
+
   @override
   Widget build(BuildContext context) {
+    String buttonTitle = widget.isWalkService ? "도착 완료" : "탑승 완료";
+
     final stepper = CustomStepper(
-      steps: ['가는중', '탑승 완료'],
+      steps: widget.isWalkService ? ['가는중', '도착 완료'] : ['가는중', '탑승 완료'],
       currentStep: 0,
     );
     return Scaffold(
@@ -87,9 +92,9 @@ class _VtProgressState extends State<VtProgress> {
                     ],
                   )),
               buildButton(
-                title: "탑승 완료",
-                dialogTitle: '탑승 완료',
-                dialogMessage: '정말로 탑승 완료 버튼을 누르시겠습니까?',
+                title: "${buttonTitle}",
+                dialogTitle: '${buttonTitle}',
+                dialogMessage: '정말로 ${buttonTitle} 버튼을 누르시겠습니까?',
                 status: 'boarding',
               ),
             ],
@@ -100,6 +105,8 @@ class _VtProgressState extends State<VtProgress> {
   }
 
   Widget buildButton({required String title, required String dialogTitle, required String dialogMessage, required String status}) {
+
+
     return NextButton(
         title: title,
         onPressed: () {
