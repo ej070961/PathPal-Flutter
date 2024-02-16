@@ -14,6 +14,7 @@ class UserService {
       'email': volunteer.email,
       'name': volunteer.name,
       'phoneNumber': volunteer.phoneNumber,
+      'carNumber' : volunteer.carNumber
     });
   }
   Future<Volunteer> getVolunteer(String uid) async {

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +46,8 @@ class CarDetail extends StatefulWidget {
 class _CarDetailState extends State<CarDetail> {
   DateTime selectedDate = DateTime.now();
 
+  GoogleMapController? _mapController;
+
   @override
   Widget build(BuildContext context) {
 
@@ -67,7 +71,24 @@ class _CarDetailState extends State<CarDetail> {
             child: MyGoogleMap(
               markers: widget.markers,
               center: widget.center,
-              onMapCreated: widget.onMapCreated,
+              onMapCreated: (GoogleMapController controller){
+                _mapController = controller;
+
+                LatLng southwest = LatLng(
+                    min(widget.carSnapshot['departure_latlng'].latitude, widget.carSnapshot['destination_latlng'].latitude),
+                    min(widget.carSnapshot['departure_latlng'].longitude, widget.carSnapshot['destination_latlng'].longitude));
+                LatLng northeast = LatLng(
+                    max(widget.carSnapshot['departure_latlng'].latitude, widget.carSnapshot['destination_latlng'].latitude),
+                    max(widget.carSnapshot['departure_latlng'].longitude, widget.carSnapshot['destination_latlng'].longitude));
+
+
+                // 두 위치를 포함하는 영역을 계산합니다.
+                LatLngBounds bounds = LatLngBounds(southwest: southwest, northeast: northeast);
+
+                // 카메라를 해당 영역에 맞춥니다.
+                CameraUpdate cameraUpdate = CameraUpdate.newLatLngBounds(bounds, 50);
+                controller.animateCamera(cameraUpdate);
+              },
               currentLocationFunction: widget.currentLocationFunction,
             ),
           ),
@@ -94,4 +115,5 @@ class _CarDetailState extends State<CarDetail> {
       ),
     );
   }
+
 }
