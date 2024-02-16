@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pathpal/colors.dart';
 import 'package:pathpal/screens/dp/login.dart';
 import 'package:pathpal/screens/dp/requests.dart';
+import 'package:pathpal/screens/vt/requests.dart';
 import 'package:pathpal/theme.dart';
 import 'package:pathpal/widgets/build_image.dart';
 import 'package:pathpal/widgets/custom_dialog.dart';
@@ -127,7 +128,7 @@ class _MyPageState extends State<VtMyPage> {
                               onPressed: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Requests()),
+                                    builder: (context) => VtRequests()),
                               ),
                             )
                           ],
