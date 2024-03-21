@@ -125,6 +125,7 @@ class _VtSignUpState extends State<VtSignUp2> {
           phoneNumber: phoneNumber,
           carNumber: _carNumberController.text
       );
+      print("volunteer CarNumber : ${volunteer.carNumber}");
       firebaseService.saveVolunteer(volunteer);
     } else {
         print("Null 발생");

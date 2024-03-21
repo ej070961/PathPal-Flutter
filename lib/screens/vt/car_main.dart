@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -6,6 +8,7 @@ import 'package:pathpal/screens/vt/car_detail.dart';
 import 'package:pathpal/service/map_service.dart';
 import 'package:pathpal/theme.dart';
 import 'package:pathpal/widgets/appBar.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../colors.dart';
 import '../../utils/app_images.dart';
@@ -121,7 +124,7 @@ class _CarMainState extends State<CarMain> {
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return CircularProgressIndicator();
+            return Center(child: CircularProgressIndicator());
           }
           var doc = snapshot.data!;
           GeoPoint latlng = car['departure_latlng'];
@@ -278,8 +281,27 @@ class _CarMainState extends State<CarMain> {
       );
     });
 
-    mapService.moveCamera(controller, departure, destination);
+    // mapService.moveCamera(controller, departure, destination);
+    _updateCameraPosition(departure, destination);
   }
+
+  void _updateCameraPosition(LatLng departure, LatLng destination) async {
+    // 남서쪽과 북동쪽을 정의합니다.
+    LatLng southwest = LatLng(
+        min(departure.latitude, destination.latitude),
+        min(departure.longitude, destination.longitude));
+    LatLng northeast = LatLng(
+        max(departure.latitude, destination.latitude),
+        max(departure.longitude, destination.longitude));
+
+    // 두 위치를 포함하는 영역을 계산합니다.
+    LatLngBounds bounds = LatLngBounds(southwest: southwest, northeast: northeast);
+
+    // 카메라를 해당 영역에 맞춥니다.
+    CameraUpdate cameraUpdate = CameraUpdate.newLatLngBounds(bounds, 50);
+    mapController.animateCamera(cameraUpdate);
+  }
+
 
 
   Future<void> checkDocumentExists(DocumentSnapshot car) async {
